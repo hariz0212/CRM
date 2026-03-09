@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback, ChangeEvent } from "react";
 import { User } from "../User/User";
 import { addUser, deleteUserByID, getAllUser } from "./AdminService";
+import { ClipLoader } from "react-spinners";
 
 function Admin(){
   const [userList, setUserList] = useState<User[]>([]);
@@ -87,7 +88,7 @@ function Admin(){
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">
                 {loading ? (
-                  <tr><td colSpan={3} className="p-6 text-center text-gray-400 italic">Chargement...</td></tr>
+                  <ClipLoader/>
                 ) : userList.map((user) => (
                   <tr key={user.id_user} className="hover:bg-gray-50">
                     <td className="px-4 py-4 whitespace-nowrap">

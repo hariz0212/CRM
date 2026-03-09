@@ -1,10 +1,17 @@
+import { ITache,CONFIG_PRIORITE } from "./TacheService";
+import { useState } from "react";
+
 function CarteTache({ tache, auSupprimer }: { tache: ITache, auSupprimer: (id: number) => void }) {
   const [survole, setSurvole] = useState(false);
   const conf = CONFIG_PRIORITE[tache.statut_tache];
   
   // Formatage de la date pour l'affichage
-  const dateAffichee = new Date(tache.date_heure_rappel).toLocaleDateString('fr-FR', {
-    day: 'numeric', month: 'short', year: 'numeric'
+const dateAffichee = new Date(tache.date_heure_rappel).toLocaleString('fr-FR', {
+    day: 'numeric',
+    month: 'short',
+    year: 'numeric',
+    hour: '2-digit',   // Affiche 09 au lieu de 9
+    minute: '2-digit'
   });
 
   return (
@@ -21,9 +28,16 @@ function CarteTache({ tache, auSupprimer }: { tache: ITache, auSupprimer: (id: n
             <span className={`w-1.5 h-1.5 rounded-full ${conf.point}`} />
             {tache.statut_tache}
           </span>
-          <span className="text-[9px] text-gray-300 uppercase tracking-wider ml-auto">{dateAffichee}</span>
+          <span className="text-[9px] text-gray-400 font-medium ml-auto">
+             {dateAffichee.replace(',', ' à')} 
+          </span>
         </div>
         <p className="text-xs text-gray-600 leading-relaxed">{tache.libelle_tache}</p>
+        {tache.contact_nom||tache.contact_prenom && (
+        <p className="text-[10px] text-indigo-500 font-bold mt-1 italic">
+            Contact : {tache.contact_prenom} {tache.contact_nom}
+        </p>
+        )}
       </div>
 
       <button

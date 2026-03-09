@@ -25,7 +25,3 @@ export const getUserid=()=>{
     return idUser;
 }
 
-export const getAdmin=()=>{
-    const{admin}=useContext(LoginContext);
-    return admin;
-}

@@ -30,6 +30,19 @@ export const getAllContact=async(id:string)=>{
 
 } 
 
+
+export const updateComm= async(data:string,id_contact:string)=>{
+    try {
+        const reponse= await axios.put(`${url}contacts/commentaire/${id_contact}`,{commentaire:data});
+        return reponse
+    } catch (err) {
+        console.error(err);
+        console.error(data);
+        throw err;
+    }
+
+}
+
 export const AddContact=async(data:Omit<Contact,'id_contact'>)=>{
     
     try{
@@ -48,6 +61,22 @@ export const getContactById=async(id:number|string)=>{
 
     }catch(err){
         console.error(err);
+        throw err;
+    }
+}
+
+export const getTachesContact = async (id_contact: string | number, id_entreprise: string | number, id_user: string | number) => {
+    try {
+        // L'id_contact est obligatoire ici car il est dans le chemin de l'URL
+        const reponse = await axios.get(`${url}taches/contact/${id_contact}`, {
+            headers: { 
+                'id_user': id_user,
+                'id_entreprise': id_entreprise 
+            }
+        });
+        return reponse.data;
+    } catch (err) {
+        console.error("Erreur getTachesContact:", err);
         throw err;
     }
 }

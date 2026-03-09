@@ -2,7 +2,7 @@ import axios from "axios";
 const url=import.meta.env.VITE_URL_PATH;
 
 export interface Entreprise {
-  id_entreprise: number;
+  id_entreprise: string;
   nom: string;
   type_entreprise: string;
   SIRET: string;
@@ -46,6 +46,18 @@ export const AddEntreprise=async(data:Omit<Entreprise,'id_entreprise'>)=>{
 
 
 }
+export const updateComm= async(data:string,id_entreprise:string)=>{
+    try {
+        const reponse= await axios.put(`${url}contacts/commentaire/${id_entreprise}`,{commentaire:data});
+        return reponse
+    } catch (err) {
+        console.error(err);
+        console.error(data);
+        throw err;
+    }
+
+}
+
 export const getEntrepriseById=async (id:number|string)=>{
     try{
         const reponse= await axios.get(`${url}entreprises/${id}`)
@@ -62,6 +74,20 @@ export const deleteEntrepriseById=async(id:number|string)=>{
         return reponse.data;
     }catch(err){
         console.log(err);
+        throw err;
+    }
+}
+
+export const getTachesEntreprise = async (id_entreprise: string | number, id_user: string | number) => {
+    try {
+        const reponse = await axios.get(`${url}taches/entreprise/${id_entreprise}`, {
+            headers: { 
+                'id_user': id_user 
+            }
+        });
+        return reponse.data;
+    } catch (err) {
+        console.error("Erreur getTachesEntreprise:", err);
         throw err;
     }
 }

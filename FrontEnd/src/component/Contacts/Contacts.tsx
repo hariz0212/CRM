@@ -44,7 +44,7 @@ function Contacts() {
 
   /* 1. FILTRAGE */
 const filteredContacts = contactsDatas.filter(contact => {
-  const nomEntreprise = entreprise.find(e => e.id_entreprise === Number(contact.id_entreprise))?.nom ?? '';
+  const nomEntreprise = entreprise.find(e => e.id_entreprise === contact.id_entreprise)?.nom ?? '';
   
   return (
     contact.nom?.toLowerCase().includes(searchTerm.toLowerCase()) ||

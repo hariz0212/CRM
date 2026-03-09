@@ -69,5 +69,20 @@ router.delete('/:id', async (req, res) => {
         res.status(500).json({ message: "Erreur serveur" });
     }
 });
+router.put('/commentaire/:id', async (req, res) => {
+    const { id } = req.params;
+    const { commentaire } = req.body;
+
+    const sql = "UPDATE CONTACT SET commentaire = ? WHERE id_contact = ?";
+
+    try {
+        await db.query(sql, [commentaire, id]);
+        res.status(200).json({ message: "Commentaire mis à jour" });
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ message: "Erreur lors de la mise à jour" });
+    }
+});
+
 
 export default router;

@@ -4,6 +4,8 @@ import { getEntrepriseById, Entreprise, getAllEntreprise, deleteEntrepriseById }
 import { ClipLoader } from "react-spinners";
 import { getUserid } from "../login/loginService";
 import { useNavigate } from "react-router-dom";
+import SectionTaches from "../tache/SectionTaches";
+import { updateComm } from "./entrepriseService";
 
 function EntrepriseDetail() {
   const navigate=useNavigate();
@@ -12,6 +14,7 @@ function EntrepriseDetail() {
   const [entreprise, setEntreprise] = useState<Entreprise | null>(null);
   const [loading, setLoading] = useState(true);
   const [AllEntreprise, setAllEntreprise] = useState<Entreprise[]>([]);
+  const[commentaire,setCommentaire]=useState('');
 
   useEffect(() => {
     const fetchDetail = async () => {
@@ -37,6 +40,16 @@ function EntrepriseDetail() {
 
     fetchDetail();
   }, [id]);
+
+   const handleComm=async () => {
+      if(!entreprise){alert('impossible de modifier le commentaire');return;}
+      try {
+        await updateComm(commentaire,entreprise.id_entreprise)
+        alert('modification réussi');
+      } catch (err) {
+        console.log(err)
+      }
+    }
 
   const handleDelete=async(id:string|number)=>{
     if(!window.confirm('voulez-vous supprimer cette entreprise?')){
@@ -123,12 +136,15 @@ function EntrepriseDetail() {
                   <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-widest border-b pb-1">Commentaires de suivi</h3>
                   <div className="space-y-3">
                     <textarea 
-                      defaultValue={entreprise.commentaire}
+                      onChange={(e)=>setCommentaire(e.target.value)}
+                      value={entreprise.commentaire}
                       className="w-full h-32 p-4 bg-gray-50 border border-gray-100 rounded-xl text-sm italic text-gray-600 outline-none focus:ring-1 focus:ring-slate-300 resize-none transition-all"
                       placeholder="Ajouter des notes sur cette entreprise (historique, préférences, échanges passés...)"
                     ></textarea>
                     <div className="flex justify-end">
-                      <button className="bg-white border border-slate-800 text-slate-800 hover:bg-slate-800 hover:text-white text-[9px] font-black py-2 px-6 rounded-lg uppercase tracking-widest transition-all shadow-sm active:scale-95">
+                      <button
+                      onClick={()=>handleComm()}
+                       className="bg-white border border-slate-800 text-slate-800 hover:bg-slate-800 hover:text-white text-[9px] font-black py-2 px-6 rounded-lg uppercase tracking-widest transition-all shadow-sm active:scale-95">
                         Enregistrer le commentaire
                       </button>
                     </div>
@@ -150,28 +166,7 @@ function EntrepriseDetail() {
                 </div>
 
                 {/* 4. GESTION DES TÂCHES */}
-                <div className="space-y-4 pt-4">
-                  <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-widest border-b pb-1">Suivi des actions</h3>
-                  <div className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm space-y-4">
-                    <div className="w-full md:w-1/2">
-                      <label className="block text-[9px] font-bold text-gray-400 uppercase mb-1 tracking-wider">Statut de la relation</label>
-                      <select defaultValue={entreprise.statut_contact} className="w-full p-2 bg-gray-50 border border-gray-200 rounded-lg text-xs font-bold outline-none focus:ring-2 focus:ring-slate-300">
-                        <option value="Urgent">🔴 Urgent</option>
-                        <option value="En cours">🟡 En cours</option>
-                        <option value="À contacter">🔵 À faire</option>
-                      </select>
-                    </div>
-                    <div>
-                      <label className="block text-[9px] font-bold text-gray-400 uppercase mb-1 tracking-wider">Description de la prochaine action</label>
-                      <textarea className="w-full h-20 p-3 bg-gray-50 border border-gray-100 rounded-lg text-xs outline-none focus:ring-2 focus:ring-slate-300 italic text-gray-600 resize-none" placeholder="Ex: Envoyer le catalogue des formations..."></textarea>
-                    </div>
-                    <div className="flex justify-end pt-2">
-                      <button className="bg-slate-800 hover:bg-slate-900 text-white text-[10px] font-black py-2.5 px-8 rounded-lg uppercase tracking-widest transition-all shadow-md active:scale-95">
-                        Mettre à jour
-                      </button>
-                    </div>
-                  </div>
-                </div>
+                <SectionTaches id_entreprise={entreprise.id_entreprise} id_user={id_user} />
               </div>
             </div>
           </section>

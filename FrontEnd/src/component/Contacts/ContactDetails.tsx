@@ -1,9 +1,10 @@
 import { useParams, NavLink } from "react-router-dom";
 import { useEffect, useState } from "react";
 // Assure-toi d'avoir ces fonctions dans ton contactService
-import { getContactById, getAllContact, Contact, deleteContactById } from "./ContactService"; 
+import { getContactById, getAllContact, Contact, deleteContactById, updateComm } from "./ContactService"; 
 import { getUserid } from "../login/loginService";
 import { useNavigate } from "react-router-dom";
+import SectionTaches from "../tache/SectionTaches";
 
 
 
@@ -14,7 +15,17 @@ function ContactDetail() {
   const [allContacts, setAllContacts] = useState<Contact[]>([]);
   const [loading, setLoading] = useState(true);
   const id_user=getUserid();
+  const[commentaire,setCommentaire]=useState('');
 
+  const handleComm=async () => {
+    if(!contact){alert('impossible de modifier le commentaire');return;}
+    try {
+      await updateComm(commentaire,contact?.id_contact)
+      alert('modification réussi');
+    } catch (err) {
+      console.log(err)
+    }
+  }
 
   const handleDelete=async(id:string)=>{
     console.log('handleDelete')
@@ -115,40 +126,23 @@ function ContactDetail() {
             <div className="space-y-3">
               <h3 className="text-[10px] font-black text-indigo-400 uppercase tracking-widest border-b pb-1">Notes & Commentaires</h3>
               <textarea 
-                defaultValue={contact.commentaire}
+                onChange={(e)=>setCommentaire(e.target.value)}
+                value={contact.commentaire}
                 className="w-full h-24 p-4 bg-gray-50 border border-gray-100 rounded-xl text-sm italic text-gray-600 outline-none focus:ring-1 focus:ring-indigo-300 resize-none"
                 placeholder="Notes particulières sur ce contact..."
               ></textarea>
               <div className="flex justify-end">
-                <button className="bg-indigo-700 hover:bg-indigo-800 text-white text-[10px] font-bold py-2 px-6 rounded-lg uppercase tracking-widest shadow-md transition-all active:scale-95">
+                <button 
+                onClick={()=>handleComm()}
+                className="bg-indigo-700 hover:bg-indigo-800 text-white text-[10px] font-bold py-2 px-6 rounded-lg uppercase tracking-widest shadow-md transition-all active:scale-95">
                   Enregistrer
                 </button>
               </div>
             </div>
 
                 {/* 3. SUIVI DES ACTIONS */}
-                <div className="space-y-4 pt-4">
-                  <h3 className="text-[10px] font-black text-indigo-400 uppercase tracking-widest border-b pb-1">Tâche pour ce contact</h3>
-                  <div className="bg-white p-6 rounded-xl border border-indigo-100 shadow-sm space-y-4">
-                    <div className="w-full md:w-1/2">
-                      <label className="block text-[9px] font-bold text-gray-400 uppercase mb-1">Priorité d'appel</label>
-                      <select defaultValue={contact.statut_contact} className="w-full p-2 bg-gray-50 border border-gray-200 rounded-lg text-xs font-bold outline-none focus:ring-2 focus:ring-indigo-300">
-                        <option value="Urgent">🔴 Urgent</option>
-                        <option value="En cours">🟡 En cours</option>
-                        <option value="À contacter">🔵 À faire</option>
-                      </select>
-                    </div>
-                    <textarea 
-                      className="w-full h-20 p-3 bg-gray-50 border border-gray-100 rounded-lg text-xs outline-none focus:ring-2 focus:ring-indigo-400" 
-                      placeholder="Ex: Doit m'envoyer la convention de stage lundi..."
-                    ></textarea>
-                    <div className="flex justify-end pt-2">
-                      <button className="bg-indigo-700 hover:bg-indigo-800 text-white text-[10px] font-bold py-2.5 px-8 rounded-lg uppercase tracking-widest shadow-md transition-all active:scale-95">
-                        Enregistrer l'action
-                      </button>
-                    </div>
-                  </div>
-                </div>
+                <SectionTaches id_entreprise={contact.id_entreprise} id_user={id_user} id_contact={id} />
+                
               </div>
             </div>
           </section>

@@ -64,31 +64,3 @@ CREATE TABLE TACHE (
     CONSTRAINT fk_tache_entreprise FOREIGN KEY (id_entreprise) REFERENCES ENTREPRISE(id_entreprise) ON DELETE CASCADE,
     CONSTRAINT fk_tache_contact FOREIGN KEY (id_contact) REFERENCES CONTACT(id_contact) ON DELETE SET NULL
 );
-
--- 3. INSERTS DE TEST (Vérifiés)
-/**INSERT INTO USER (nom, prenom, email, identifiant, mdp, role) 
-VALUES ('hariz', 'piratheepan', 'harizsan38@gmail.com', 'harsan02', '$2b$10$qCc//l1oOpMisgzgX.sB/uIh1ow8kc25QHUHFD3fvSIw0ZmuxboKy', 'admin');
-
-INSERT INTO ENTREPRISE (nom, type_entreprise, SIRET, secteur, statut_contact, commentaire, id_user) 
-VALUES 
-('Mairie de Bobigny', 'Secteur Public', '21930008600019', 'Administration', 'À contacter', 'Partenaire historique pour les stages de com.', 1),
-('Boulangerie du Centre', 'Artisan', '12398745600012', 'Alimentaire', 'En cours', 'Demande un stagiaire pour la vente.', 1),
-('Innov''Tech 93', 'Startup', '45612378900055', 'Technologie', 'Urgent', 'Grosse recherche de développeurs.', 1);
-
-INSERT INTO CONTACT (nom, prenom, fonction, statut_contact, commentaire, id_entreprise)
-VALUES 
-('Hallyday', 'Johnny', 'Directeur Artistique', 'Urgent', 'Ne pas appeler avant 11h.', 2),
-('Piaf', 'Édith', 'Chargée de Com', 'En cours', 'Ancienne élève de l IUT.', 1);
-
-INSERT INTO TACHE (date_heure_rappel, libelle_tache, statut_tache, id_entreprise, id_user, id_contact)
-VALUES 
-('2024-05-21 09:00:00', 'Signer contrat partenariat', 'Urgent', 3, 1, 1), 
-('2024-05-22 14:30:00', 'Relance téléphonique', 'En cours', 1, 1, NULL),
-('2024-05-25 10:00:00', 'Envoyer invitation', 'À contacter', 2, 1, 2);
-
-/**DELETE FROM TACHE WHERE id_tache IN (1, 2, 3, 4);
-DELETE FROM CONTACT WHERE id_contact IN (1, 2, 3);
-DELETE FROM ENTREPRISE WHERE id_entreprise IN (1, 2, 3);
-**/
-
-**/
