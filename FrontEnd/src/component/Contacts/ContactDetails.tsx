@@ -5,6 +5,7 @@ import { getContactById, getAllContact, Contact, deleteContactById, updateComm }
 import { getUserid } from "../login/loginService";
 import { useNavigate } from "react-router-dom";
 import SectionTaches from "../tache/SectionTaches";
+import { ClipLoader } from "react-spinners";
 
 
 
@@ -53,6 +54,7 @@ function ContactDetail() {
             getContactById(id),
             getAllContact(id_user)
           ]);
+          
           setContact(detailData);
           setAllContacts(listData);
         }
@@ -66,7 +68,7 @@ function ContactDetail() {
     fetchContactData();
   }, [id]); // Recharge si on clique sur un autre contact dans la sidebar
 
-  if (loading) return <div className="p-10 text-center font-bold text-indigo-600">Chargement du profil...</div>;
+  if (loading) return <ClipLoader />
   if (!contact) return <div className="p-10 text-center text-red-500">Contact introuvable.</div>;
 
   return (
@@ -80,16 +82,27 @@ function ContactDetail() {
               
               {/* Header Contact : Thème Indigo/Violet */}
               <div className="bg-gradient-to-r from-indigo-800 to-purple-700 p-8 text-white flex justify-between items-start">
-                <div className="flex items-center gap-6">
-                  {/* Avatar avec initiales */}
-                  <div className="w-16 h-16 bg-white/20 backdrop-blur-md rounded-full flex items-center justify-center text-2xl font-bold shadow-inner border border-white/30">
-                    {contact.nom[0]}{contact.prenom ? contact.prenom[0] : ''}
-                  </div>
-                  <div>
-                    <h1 className="text-2xl font-bold">{contact.prenom} {contact.nom}</h1>
-                    <p className="text-indigo-200 text-xs mt-1 uppercase tracking-widest font-semibold italic">
+                <div>
+                  <h1 className="text-2xl font-bold leading-tight">
+                    {contact.prenom} {contact.nom}
+                  </h1>
+                  
+                  <div className="flex flex-wrap items-center gap-3 mt-2">
+                    {/* Fonction */}
+                    <p className="text-indigo-200 text-[10px] uppercase tracking-widest font-bold italic opacity-90">
                       {contact.fonction || 'Poste non renseigné'}
                     </p>
+
+                    <span className="text-white/30 text-xs hidden md:block">•</span>
+
+                    {/* LIEN VERS L'ENTREPRISE */}
+                    <NavLink 
+                      to={`/entreprises/${contact.id_entreprise}`}
+                      className="flex items-center gap-1.5 bg-white/10 hover:bg-white/20 border border-white/20 px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-tighter transition-all active:scale-95"
+                    >
+                      <span className="text-white">{contact.nom_entreprise}</span>
+                      <span className="text-indigo-300 ml-1">→</span>
+                    </NavLink>
                   </div>
                 </div>
                 <button
@@ -127,7 +140,7 @@ function ContactDetail() {
               <h3 className="text-[10px] font-black text-indigo-400 uppercase tracking-widest border-b pb-1">Notes & Commentaires</h3>
               <textarea 
                 onChange={(e)=>setCommentaire(e.target.value)}
-                value={contact.commentaire}
+                value={commentaire}
                 className="w-full h-24 p-4 bg-gray-50 border border-gray-100 rounded-xl text-sm italic text-gray-600 outline-none focus:ring-1 focus:ring-indigo-300 resize-none"
                 placeholder="Notes particulières sur ce contact..."
               ></textarea>

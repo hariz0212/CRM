@@ -10,6 +10,7 @@ export interface Entreprise {
   statut_contact: 'À contacter' | 'En cours' | 'Urgent';
   siteweb?: string;
   telephone?: string;
+  cfa?: string;
   rue?:string;
   ville?:string;
   code_postal?:string;
@@ -48,7 +49,7 @@ export const AddEntreprise=async(data:Omit<Entreprise,'id_entreprise'>)=>{
 }
 export const updateComm= async(data:string,id_entreprise:string)=>{
     try {
-        const reponse= await axios.put(`${url}contacts/commentaire/${id_entreprise}`,{commentaire:data});
+        const reponse= await axios.put(`${url}entreprises/commentaire/${id_entreprise}`,{commentaire:data});
         return reponse
     } catch (err) {
         console.error(err);

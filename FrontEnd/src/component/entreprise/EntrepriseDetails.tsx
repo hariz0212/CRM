@@ -30,6 +30,7 @@ function EntrepriseDetail() {
         // Une fois que les deux sont arrivées, on met à jour les états
         setEntreprise(detailData);
         setAllEntreprise(listData);
+        setCommentaire(detailData.commentaire);
       }
     } catch (err) {
       console.error("Erreur de récupération globale:", err);
@@ -45,6 +46,7 @@ function EntrepriseDetail() {
       if(!entreprise){alert('impossible de modifier le commentaire');return;}
       try {
         await updateComm(commentaire,entreprise.id_entreprise)
+        setEntreprise({ ...entreprise, commentaire: commentaire });
         alert('modification réussi');
       } catch (err) {
         console.log(err)
@@ -85,15 +87,20 @@ function EntrepriseDetail() {
               
               {/* Header Dynamique avec Bouton Supprimer */}
               <div className="bg-gradient-to-r from-slate-800 to-slate-700 p-8 text-white flex justify-between items-center">
-                <div className="flex items-center gap-6">
-                  <div className="w-16 h-16 bg-white/10 backdrop-blur-md rounded-xl flex items-center justify-center text-3xl shadow-inner border border-white/20">
-                    🏢
-                  </div>
-                  <div>
-                    <h1 className="text-2xl font-bold">{entreprise.nom}</h1>
-                    <p className="text-slate-300 text-xs mt-1 uppercase tracking-widest font-semibold">Fiche Entreprise #{id}</p>
-                  </div>
-                </div>
+                <div>
+  <div className="flex items-center gap-3">
+    <h1 className="text-2xl font-bold">{entreprise.nom}</h1>
+    {/* BADGE CFA DYNAMIQUE */}
+    {entreprise.cfa && (
+      <span className="bg-amber-400 text-amber-950 text-[9px] font-black px-2 py-1 rounded-md shadow-sm border border-amber-500/20">
+        🎓 CFA {entreprise.cfa}
+      </span>
+    )}
+  </div>
+  <p className="text-slate-300 text-xs mt-1 uppercase tracking-widest font-semibold">
+    Fiche Entreprise #{id}
+  </p>
+</div>
 
                 <button
                 onClick={()=>handleDelete(entreprise.id_entreprise)} 
@@ -137,7 +144,7 @@ function EntrepriseDetail() {
                   <div className="space-y-3">
                     <textarea 
                       onChange={(e)=>setCommentaire(e.target.value)}
-                      value={entreprise.commentaire}
+                      value={commentaire}
                       className="w-full h-32 p-4 bg-gray-50 border border-gray-100 rounded-xl text-sm italic text-gray-600 outline-none focus:ring-1 focus:ring-slate-300 resize-none transition-all"
                       placeholder="Ajouter des notes sur cette entreprise (historique, préférences, échanges passés...)"
                     ></textarea>

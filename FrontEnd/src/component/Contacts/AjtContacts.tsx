@@ -22,6 +22,7 @@ function AjtContact({ onClose, onSuccess, entreprise }: AjtContactProps) {
     linkedin: '',
     commentaire: '',
     id_entreprise: '',
+    nom_entreprise:'',
     id_user: id_user,
   });
 

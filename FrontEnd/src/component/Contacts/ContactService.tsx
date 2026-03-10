@@ -13,6 +13,7 @@ export interface Contact{
     linkedin:string;
     commentaire:string;
     id_entreprise:string;
+    nom_entreprise:string;
 }
 
 
@@ -57,7 +58,9 @@ export const AddContact=async(data:Omit<Contact,'id_contact'>)=>{
 export const getContactById=async(id:number|string)=>{
     try{
         const reponse=await axios.get(`${url}contacts/${id}`);
+        console.log(reponse.data)
         return reponse.data;
+
 
     }catch(err){
         console.error(err);

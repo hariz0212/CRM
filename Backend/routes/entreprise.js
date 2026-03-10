@@ -35,7 +35,7 @@ router.get('/:id', async (req, res) => {
     console.log(id);
     
     // On utilise un "?" (placeholder) pour éviter les injections SQL
-    const sql = 'SELECT * FROM ENTREPRISE WHERE id_entreprise = ?';
+    const sql = 'SELECT *, nom AS nom_entreprise FROM ENTREPRISE WHERE id_entreprise = ?';
     
     // On exécute la requête (en passant l'ID dans un tableau)
     const [rows] = await db.execute(sql, [id]); 
@@ -73,7 +73,7 @@ router.put('/commentaire/:id', async (req, res) => {
     const { id } = req.params;
     const { commentaire } = req.body;
 
-    const sql = "UPDATE CONTACT SET commentaire = ? WHERE id_contact = ?";
+    const sql = "UPDATE ENTREPRISE SET commentaire = ? WHERE id_entreprise = ?";
 
     try {
         await db.query(sql, [commentaire, id]);

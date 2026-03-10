@@ -8,9 +8,19 @@ const router=express.Router();
 router.get('/', async (req, res) => {
     try {
         const id_user = req.headers['id_user'];
-        const sql = `SELECT c.* FROM CONTACT c 
-                     JOIN ENTREPRISE e ON c.id_entreprise = e.id_entreprise 
-                     WHERE e.id_user = ?`;
+        const sql = `
+    SELECT 
+        c.id_contact, 
+        c.nom, 
+        c.prenom, 
+        c.fonction, 
+        c.email, 
+        c.telephone, 
+        c.id_entreprise,
+        e.nom AS nom_entreprise 
+    FROM CONTACT c 
+    JOIN ENTREPRISE e ON c.id_entreprise = e.id_entreprise 
+    WHERE e.id_user = ?`;
         const [rows] = await db.query(sql, [id_user]);
         res.json(rows);
     } catch (err) {
@@ -26,6 +36,9 @@ router.post('/', async (req,res)=>{
         res.status(200).json({message:'insertion réussit'})
         
     } catch (err) {
+        if(err.code=='ER_DUP_ENTRY'){
+          res.status(409).json({message:'Mail deja existant '})
+        }
         console.error(err);
         res.status(500).json({message:'erreur lors de linsertion'});
         
@@ -49,7 +62,12 @@ router.get('/:id', async (req, res) => {
     console.log("Recherche du contact ID :", id);
     
     // Requête SQL pour un contact spécifique
-    const sql = 'SELECT * FROM CONTACT WHERE id_contact = ?';
+    const sql = `
+      SELECT c.*, e.nom AS nom_entreprise 
+      FROM CONTACT c
+      LEFT JOIN ENTREPRISE e ON c.id_entreprise = e.id_entreprise
+      WHERE c.id_contact = ?
+    `;
     
     const [rows] = await db.execute(sql, [id]); 
 
