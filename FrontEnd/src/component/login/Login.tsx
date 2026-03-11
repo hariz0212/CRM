@@ -7,6 +7,7 @@ import { useNavigate } from "react-router-dom";
 
 function Login() {
     const navigate =useNavigate();
+    const url=import.meta.env.VITE_URL_PATH;
     const [loading, setLoading] = useState(false);
     const [MsgError, setMsgError] = useState('');
     const {setIdUser,setAdmin}=useContext(LoginContext);
@@ -33,6 +34,7 @@ const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         
         // 1. On vérifie ce que le serveur nous envoie vraiment
         console.log("Réponse du serveur :", userData);
+        console.log(url);
 
         if (userData && userData.id_user) {
             // 2. ✅ ON FORCE L'ÉCRITURE IMMÉDIATE
