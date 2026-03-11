@@ -32,7 +32,7 @@ router.get('/contact/:id',async(req,res)=>{
     const{id}=req.params;
     const id_user=req.headers['id_user'];
     const id_entreprise=req.headers['id_entreprise'];
-    const sql='SELECT * FROM tache where id_user=? and id_entreprise=? and id_contact=?';
+    const sql='SELECT * FROM TACHE where id_user=? and id_entreprise=? and id_contact=?';
     try {
         const [rows]=await db.query(sql,[id_user,id_entreprise,id]);
         res.status(200).json(rows);
