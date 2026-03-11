@@ -34,7 +34,8 @@ const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         
         // 1. On vérifie ce que le serveur nous envoie vraiment
         console.log("Réponse du serveur :", userData);
-        console.log(url);
+        console.log("Toutes les variables :", import.meta.env);
+        console.log('url:',url);
 
         if (userData && userData.id_user) {
             // 2. ✅ ON FORCE L'ÉCRITURE IMMÉDIATE
