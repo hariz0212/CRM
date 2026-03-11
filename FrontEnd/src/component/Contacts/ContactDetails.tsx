@@ -57,6 +57,7 @@ function ContactDetail() {
           
           setContact(detailData);
           setAllContacts(listData);
+          setCommentaire(detailData.commentaire || '')
         }
       } catch (err) {
         console.error("Erreur de récupération contact:", err);

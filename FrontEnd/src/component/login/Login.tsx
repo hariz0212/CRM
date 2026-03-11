@@ -24,20 +24,31 @@ function Login() {
         }));
     };
 
-    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setMsgError('');
     try {
         setLoading(true);
-        const userData = await checkMdpAvecIdentifiant(formData); // ← directement dans une const
-        setIdUser(userData.id_user);
-        setAdmin(userData.role === 'admin');
-        console.log(userData.id_user);
-        console.log(userData.role);
-        console.log('Connexion réussie !');
-        navigate('/main');
+        const userData = await checkMdpAvecIdentifiant(formData); 
+        
+        // 1. On vérifie ce que le serveur nous envoie vraiment
+        console.log("Réponse du serveur :", userData);
+
+        if (userData && userData.id_user) {
+            // 2. ✅ ON FORCE L'ÉCRITURE IMMÉDIATE
+            localStorage.setItem("id_user", userData.id_user.toString());
+            localStorage.setItem("admin", (userData.role === 'admin').toString());
+
+            // 3. On met à jour le Context pour les composants déjà ouverts
+            setIdUser(userData.id_user);
+            setAdmin(userData.role === 'admin');
+
+            console.log('ID bien enregistré dans le localStorage !');
+            navigate('/main');
+        } else {
+            setMsgError("Erreur : l'ID utilisateur est manquant dans la réponse.");
+        }
     } catch (err) {
-        console.log(err);
         setMsgError('Identifiant ou mot de passe incorrect');
     } finally {
         setLoading(false);
