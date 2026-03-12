@@ -1,4 +1,4 @@
-import { ITache } from "../tache/TacheService";
+
 
 import axios from "axios";
 const url=import.meta.env.VITE_URL_PATH;
@@ -13,12 +13,16 @@ export const getAllTache = async (id_user: string | number) => {
     }
 };
 
-export const addTache = async (tache: ITache) => {
+export const updateTacheLibelle = async (data: string, id_tache: string | number) => {
     try {
-        const reponse = await axios.post(`${url}taches`, tache);
-        return reponse.data;
+        // On suit la même structure : URL + /taches/libelle/ + ID
+        const reponse = await axios.put(`${url}taches/${id_tache}`, { 
+            libelle_tache: data 
+        });
+        return reponse;
     } catch (err) {
-        console.error("Erreur service addTache:", err);
+        console.error("Erreur lors de la mise à jour du libellé de la tâche :");
+        console.error("Data envoyée :", data);
         throw err;
     }
 };

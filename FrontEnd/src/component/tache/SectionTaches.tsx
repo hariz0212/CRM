@@ -147,7 +147,7 @@ useEffect(() => {
           <div>
             <label className="block text-[9px] font-bold text-gray-400 uppercase tracking-widest mb-2">Libellé de la tâche</label>
             <textarea
-              value={nouveauLibelle}
+              defaultValue={nouveauLibelle}
               onChange={(e) => setNouveauLibelle(e.target.value)}
               className={`w-full p-3 bg-gray-50 border border-gray-100 rounded-xl text-xs outline-none focus:ring-2 ${t.anneau} italic text-gray-600 resize-none`}
               placeholder="Ex: Envoyer le contrat par email..."

@@ -45,6 +45,19 @@ router.get('/contact/:id',async(req,res)=>{
 
 });
 
+router.put('/:id', async(req,res)=>{
+    const{id}=req.params;
+    const{libelle_tache}=req.body;
+    const sql = "UPDATE TACHE SET libelle_tache = ? WHERE id_tache = ?";
+    try {
+        await db.query(sql,[libelle_tache,id]);
+        res.status(200).json({message:'modification commentaire niveau base de donné'});
+    } catch (err) {
+        console.log(err)
+        res.status(501).json({message:'erreur modification commentaire niveau base de donné'});       
+    }
+})
+
 router.get('/user/:id',async (req,res) => {
     const{id}=req.params;
     const sql=`SELECT t.*, e.nom as entreprise_nom, c.nom as contact_nom, c.prenom as contact_prenom FROM TACHE t JOIN ENTREPRISE e ON t.id_entreprise = e.id_entreprise LEFT JOIN CONTACT c ON t.id_contact = c.id_contact WHERE t.id_user = ?`

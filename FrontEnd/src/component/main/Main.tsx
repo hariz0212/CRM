@@ -1,8 +1,9 @@
 import { useState, useEffect } from 'react';
-import { NavLink } from 'react-router-dom';
+
 import { getAllTache } from './MainService'; // Ton service
 import { getUserid } from '../login/loginService';
 import { StatutTache } from '../tache/TacheService'; // On réutilise le type
+import { Tachemain } from './Tachemain';
 
 function Main() {
   const id_user = getUserid();
@@ -106,53 +107,16 @@ function Main() {
                 </div>
 
                 {/* Liste des Cartes */}
-                <div className="space-y-4 flex-grow">
-                  {currentTasks.map((task) => (
-                    <div key={task.id_tache} className={`bg-white p-4 rounded-xl shadow-md border-l-4 transition-all hover:shadow-lg ${
-                      category === "Urgent" ? "border-l-red-500" : category === "À contacter" ? "border-l-blue-500" : "border-l-amber-500"
-                    }`}>
-                      
-                      {/* Source : Entreprise ou Contact */}
-                      <div className="flex justify-between items-start mb-2">
-                        <div className="min-w-0">
-                          <p className="text-[10px] font-black text-blue-900 uppercase truncate">
-                            {task.id_contact ? `👤 ${task.contact_prenom} ${task.contact_nom}` : `🏢 ${task.entreprise_nom}`}
-                          </p>
-                          <p className="text-[9px] text-gray-400 font-bold uppercase">
-                            {new Date(task.date_heure_rappel).toLocaleString('fr-FR', { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' })}
-                          </p>
-                        </div>
-                        <NavLink 
-                          to={task.id_contact ? `/contacts/${task.id_contact}` : `/entreprises/${task.id_entreprise}`}
-                          className="shrink-0 bg-gray-100 hover:bg-gray-200 p-1.5 rounded-lg transition-colors"
-                        >
-                          🔗
-                        </NavLink>
-                      </div>
-
-                      {/* Libellé de la tâche */}
-                      <div className="bg-slate-50 p-3 rounded-lg border border-slate-100 mb-3">
-                         <textarea
-                         className="text-xs text-gray-700 italic leading-relaxed" 
-                         value={task.libelle_tache}></textarea>
-                      </div>
-
-                      {/* Action Rapide */}
-                      <div className="flex gap-2">
-                        <button 
-                          onClick={() => alert('Fonctionnalité de validation à venir')}
-                          className="flex-1 bg-white border border-gray-200 hover:border-green-500 hover:text-green-600 text-[9px] font-black uppercase py-2 rounded-lg transition-all"
-                        >
-                          Terminer
-                        </button>
-                      </div>
-                    </div>
-                  ))}
-                  
-                  {filteredTasks.length === 0 && (
-                    <div className="text-center py-20 opacity-20 italic text-[10px] font-bold uppercase tracking-widest">Aucun flux</div>
-                  )}
-                </div>
+                  <div className="space-y-4 flex-grow">
+                    {currentTasks.map((task) => (
+                      // ✅ On appelle le sous-composant ici
+                      <Tachemain key={task.id_tache} task={task} category={category} />
+                    ))}
+                    
+                    {filteredTasks.length === 0 && (
+                      <div className="text-center py-20 opacity-20 italic text-[10px] font-bold uppercase tracking-widest">Aucun flux</div>
+                    )}
+                  </div>
 
                 {/* Pagination */}
                 <div className="mt-6 flex items-center justify-between bg-white/50 p-2 rounded-xl border border-white/50">

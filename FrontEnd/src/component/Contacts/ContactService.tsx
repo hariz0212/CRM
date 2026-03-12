@@ -14,6 +14,7 @@ export interface Contact{
     commentaire:string;
     id_entreprise:string;
     nom_entreprise:string;
+    id_user:string;
 }
 
 

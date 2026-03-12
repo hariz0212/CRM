@@ -25,7 +25,12 @@ router.post('/', async (req, res) => {
         await db.query(sql, [nom, type_entreprise, SIRET, secteur, siteweb, telephone, rue, ville, code_postal, statut_contact, id_user]);
         res.status(200).json({ message: 'insertion réussie' });
     } catch (err) {
-    res.status(500).json({ message: `erreur lors de l insertion ${err.message}` });
+    if (err.errno === 1062) {
+        return res.status(400).json({ 
+            error: "Vous avez déjà enregistré cette entreprise dans votre liste." 
+        });
+    }
+    res.status(500).json({ error: "Erreur serveur" });
 }
 })
 // Le :id dans l'URL devient disponible dans req.params.id

@@ -30,9 +30,9 @@ router.get('/', async (req, res) => {
 
 router.post('/', async (req,res)=>{
     try {
-        const{nom,prenom,fonction,telephone,email,statut_contact,linkedin,id_entreprise}=req.body;
-        const sql='INSERT INTO CONTACT (nom,prenom,fonction,telephone,email,statut_contact,linkedin,id_entreprise) VALUES(?,?,?,?,?,?,?,?)';
-        await db.query(sql,[nom,prenom,fonction,telephone,email,statut_contact,linkedin,id_entreprise]);
+        const{nom,prenom,fonction,telephone,email,statut_contact,linkedin,id_entreprise,id_user}=req.body;
+        const sql='INSERT INTO CONTACT (nom,prenom,fonction,telephone,email,statut_contact,linkedin,id_entreprise,id_user) VALUES(?,?,?,?,?,?,?,?,?)';
+        await db.query(sql,[nom,prenom,fonction,telephone,email,statut_contact,linkedin,id_entreprise,id_user]);
         res.status(200).json({message:'insertion réussit'})
         
     } catch (err) {
