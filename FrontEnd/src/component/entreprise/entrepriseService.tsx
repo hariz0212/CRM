@@ -47,6 +47,16 @@ export const AddEntreprise=async(data:Omit<Entreprise,'id_entreprise'>)=>{
 
 
 }
+export const updateEntreprise = async (id_entreprise: string | number, data: any) => {
+    try {
+        // On envoie l'objet data qui contient tous les champs (nom, ville, etc.)
+        const reponse = await axios.put(`${url}entreprises/${id_entreprise}`, data);
+        return reponse;
+    } catch (err) {
+        console.error("Erreur mise à jour entreprise:", err);
+        throw err;
+    }
+};
 export const updateComm= async(data:string,id_entreprise:string)=>{
     try {
         const reponse= await axios.put(`${url}entreprises/commentaire/${id_entreprise}`,{commentaire:data});

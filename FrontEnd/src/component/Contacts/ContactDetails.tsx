@@ -6,11 +6,13 @@ import { getUserid } from "../login/loginService";
 import { useNavigate } from "react-router-dom";
 import SectionTaches from "../tache/SectionTaches";
 import { ClipLoader } from "react-spinners";
+import ModifierContact from "./ModifierContacts";
 
 
 
 function ContactDetail() {
   const navigate=useNavigate()
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const { id } = useParams<{ id: string }>();
   const [contact, setContact] = useState<Contact | null>(null);
   const [allContacts, setAllContacts] = useState<Contact[]>([]);
@@ -82,14 +84,15 @@ function ContactDetail() {
             <div className="bg-white rounded-2xl shadow-xl overflow-hidden border border-gray-100">
               
               {/* Header Contact : Thème Indigo/Violet */}
-              <div className="bg-gradient-to-r from-indigo-800 to-purple-700 p-8 text-white flex justify-between items-start">
-                <div>
-                  <h1 className="text-2xl font-bold leading-tight">
+              <div className="bg-gradient-to-r from-indigo-800 to-purple-700 p-8 text-white flex flex-col md:flex-row justify-between items-center gap-4">
+                
+                {/* BLOC GAUCHE : INFOS GÉNÉRALES */}
+                <div className="flex flex-col items-center md:items-start">
+                  <h1 className="text-3xl font-bold leading-tight">
                     {contact.prenom} {contact.nom}
                   </h1>
                   
-                  <div className="flex flex-wrap items-center gap-3 mt-2">
-                    {/* Fonction */}
+                  <div className="flex flex-wrap items-center gap-3 mt-2 justify-center md:justify-start">
                     <p className="text-indigo-200 text-[10px] uppercase tracking-widest font-bold italic opacity-90">
                       {contact.fonction || 'Poste non renseigné'}
                     </p>
@@ -101,16 +104,30 @@ function ContactDetail() {
                       to={`/entreprises/${contact.id_entreprise}`}
                       className="flex items-center gap-1.5 bg-white/10 hover:bg-white/20 border border-white/20 px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-tighter transition-all active:scale-95"
                     >
-                      <span className="text-white">{contact.nom_entreprise}</span>
+                      <span>{contact.nom_entreprise}</span>
                       <span className="text-indigo-300 ml-1">→</span>
                     </NavLink>
                   </div>
                 </div>
-                <button
-                onClick={()=>handleDelete(contact.id_contact)}
-                className="bg-red-500/20 hover:bg-red-500 text-red-100 border border-red-400/50 px-3 py-1.5 rounded-lg text-[10px] font-bold uppercase tracking-wider transition-all">
-                  Supprimer
-                </button>
+
+                {/* BLOC DROITE : ACTIONS GROUPÉES */}
+                <div className="flex items-center gap-3">
+                  {/* Modifier en premier (Action principale) */}
+                  <button
+                    onClick={() => setIsEditModalOpen(true)}
+                    className="bg-white text-indigo-800 hover:bg-indigo-50 px-5 py-2 rounded-lg text-[10px] font-bold uppercase tracking-wider transition-all shadow-md active:scale-95"
+                  >
+                    Modifier
+                  </button>
+
+                  {/* Supprimer en second (Action secondaire/dangereuse) */}
+                  <button
+                    onClick={() => handleDelete(contact.id_contact)}
+                    className="bg-red-500/20 hover:bg-red-500 text-red-100 border border-red-400/50 px-5 py-2 rounded-lg text-[10px] font-bold uppercase tracking-wider transition-all"
+                  >
+                    Supprimer
+                  </button>
+                </div>
               </div>
 
               <div className="p-8 space-y-8">
@@ -188,6 +205,13 @@ function ContactDetail() {
           </aside>
 
         </div>
+        {isEditModalOpen && contact && (
+          <ModifierContact 
+            contact={contact} 
+            onClose={() => setIsEditModalOpen(false)} 
+            onRefresh={(updated) => setContact(updated)} // Mise à jour instantanée de l'écran
+          />
+        )}
       </main>
     </div>
   );

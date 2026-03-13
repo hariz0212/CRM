@@ -32,6 +32,16 @@ export const getAllContact=async(id:string)=>{
 
 } 
 
+export const updateContact = async (id_contact: string | number, data: any) => {
+    try {
+        // Même logique pour les contacts
+        const reponse = await axios.put(`${url}contacts/${id_contact}`, data);
+        return reponse;
+    } catch (err) {
+        console.error("Erreur mise à jour contact:", err);
+        throw err;
+    }
+};
 
 export const updateComm= async(data:string,id_contact:string)=>{
     try {

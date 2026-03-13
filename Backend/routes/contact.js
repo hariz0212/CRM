@@ -83,6 +83,22 @@ router.get('/:id', async (req, res) => {
     res.status(500).json({ message: "Erreur serveur lors de la récupération du contact" });
   }
 });
+router.put('/:id', async (req, res) => {
+    const { id } = req.params;
+    const { nom, prenom, fonction, email, telephone, linkedin, id_user } = req.body;
+
+    const sql = `UPDATE CONTACT SET 
+        nom = ?, prenom = ?, fonction = ?, email = ?, telephone = ?, linkedin = ? 
+        WHERE id_contact = ? AND id_user = ?`;
+
+    try {
+        await db.query(sql, [nom, prenom, fonction, email, telephone, linkedin, id, id_user]);
+        res.json({ message: "Contact mis à jour !" });
+    } catch (err) {
+      console.log(err);
+        res.status(500).json({ error: err.message });
+    }
+});
 // Mettre à jour le commentaire d'un contact
 router.put('/commentaire/:id', async (req, res) => {
     const { id } = req.params;

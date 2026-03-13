@@ -2,12 +2,15 @@ import { useParams, NavLink } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { getEntrepriseById, Entreprise, getAllEntreprise, deleteEntrepriseById } from "./entrepriseService";
 import { ClipLoader } from "react-spinners";
+
 import { getUserid } from "../login/loginService";
 import { useNavigate } from "react-router-dom";
 import SectionTaches from "../tache/SectionTaches";
 import { updateComm } from "./entrepriseService";
+import ModifierEntreprise from "./ModiifierEntreprise";
 
 function EntrepriseDetail() {
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const navigate=useNavigate();
   const id_user=getUserid();
   const { id } = useParams<{ id: string }>();
@@ -85,29 +88,37 @@ function EntrepriseDetail() {
           <section className="w-full lg:w-2/3 space-y-6">
             <div className="bg-white rounded-2xl shadow-xl overflow-hidden border border-gray-100">
               
-              {/* Header Dynamique avec Bouton Supprimer */}
-              <div className="bg-gradient-to-r from-slate-800 to-slate-700 p-8 text-white flex justify-between items-center">
-                <div>
-  <div className="flex items-center gap-3">
-    <h1 className="text-2xl font-bold">{entreprise.nom}</h1>
-    {/* BADGE CFA DYNAMIQUE */}
-    {entreprise.cfa && (
-      <span className="bg-amber-400 text-amber-950 text-[9px] font-black px-2 py-1 rounded-md shadow-sm border border-amber-500/20">
-        🎓 CFA {entreprise.cfa}
-      </span>
-    )}
-  </div>
-  <p className="text-slate-300 text-xs mt-1 uppercase tracking-widest font-semibold">
-    Fiche Entreprise #{id}
-  </p>
-</div>
+              {/* Header Dynamique Réagencé */}
+                <div className="bg-gradient-to-r from-slate-800 to-slate-700 p-8 text-white flex flex-col md:flex-row justify-between items-center gap-4">
+                  <div className="text-center md:text-left">
+                    <div className="flex items-center justify-center md:justify-start gap-3">
+                      <h1 className="text-2xl font-bold">{entreprise.nom}</h1>
+                      {entreprise.cfa && (
+                        <span className="bg-amber-400 text-amber-950 text-[9px] font-black px-2 py-1 rounded-md shadow-sm border border-amber-500/20">
+                          🎓 CFA {entreprise.cfa}
+                        </span>
+                      )}
+                    </div>
+                    <p className="text-slate-300 text-xs mt-1 uppercase tracking-widest font-semibold">
+                      Fiche Entreprise #{id}
+                    </p>
+                  </div>
 
-                <button
-                onClick={()=>handleDelete(entreprise.id_entreprise)} 
-                className="bg-red-500 hover:bg-red-600 text-white px-5 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all shadow-lg active:scale-95 border border-red-400/50">
-                  Supprimer
-                </button>
-              </div>
+                  <div className="flex items-center gap-3">
+                    <button
+                      onClick={() => setIsEditModalOpen(true)}
+                      className="bg-white text-slate-800 hover:bg-slate-50 px-5 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all shadow-lg active:scale-95"
+                    >
+                      Modifier
+                    </button>
+                    <button
+                      onClick={() => handleDelete(entreprise.id_entreprise)} 
+                      className="bg-red-500/20 hover:bg-red-500 text-red-100 border border-red-400/50 px-5 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all"
+                    >
+                      Supprimer
+                    </button>
+                  </div>
+                </div>
 
               <div className="p-8 space-y-8">
                 {/* 1. INFOS TECHNIQUES RÉELLES */}
@@ -203,6 +214,13 @@ function EntrepriseDetail() {
           </aside>
 
         </div>
+        {isEditModalOpen && entreprise && (
+          <ModifierEntreprise 
+            entreprise={entreprise} 
+            onClose={() => setIsEditModalOpen(false)} 
+            onRefresh={(updated) => setEntreprise(updated)} 
+          />
+        )}
       </main>
     </div>
   );

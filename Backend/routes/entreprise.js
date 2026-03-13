@@ -74,6 +74,22 @@ router.delete('/:id', async (req, res) => {
         res.status(500).json({ message: "Erreur serveur" });
     }
 });
+router.put('/:id', async (req, res) => {
+    const { id } = req.params;
+    const { nom, type_entreprise, secteur, SIRET, siteweb, telephone, ville, id_user } = req.body;
+
+    const sql = `UPDATE ENTREPRISE SET 
+        nom = ?, type_entreprise = ?, secteur = ?, SIRET = ?, siteweb = ?, telephone = ?, ville = ? 
+        WHERE id_entreprise = ? AND id_user = ?`;
+
+    try {
+        await db.query(sql, [nom, type_entreprise, secteur, SIRET, siteweb, telephone, ville, id, id_user]);
+        res.json({ message: "Entreprise mise à jour !" });
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
 router.put('/commentaire/:id', async (req, res) => {
     const { id } = req.params;
     const { commentaire } = req.body;
