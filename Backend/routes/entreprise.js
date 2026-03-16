@@ -18,23 +18,42 @@ router.get('/', async (req,res)=>{
 })
 
 router.post('/', async (req, res) => {
-  console.log(req.body);
+    console.log("Données reçues depuis React :", req.body);
+    
     try {
-        const { nom, type_entreprise, SIRET, secteur, siteweb, telephone, rue, ville, code_postal, statut_contact, id_user } = req.body;
-        const sql = 'INSERT INTO ENTREPRISE (nom, type_entreprise, SIRET, secteur, siteweb, telephone, rue, ville, code_postal, statut_contact, id_user) VALUES(?,?,?,?,?,?,?,?,?,?,?)';
-        await db.query(sql, [nom, type_entreprise, SIRET, secteur, siteweb, telephone, rue, ville, code_postal, statut_contact, id_user]);
-        res.status(200).json({ message: 'insertion réussie' });
-    } catch (err) {
-    // ✅ LA BONNE FAÇON DE VÉRIFIER
-        const [entrepriseExistante] = await db.query("SELECT * FROM ENTREPRISE WHERE nom = ? AND id_user = ?", [nom, id_user]);
+        // 1. On extrait les variables (en gérant ton 'code_postale' avec un 'e')
+        const { 
+            nom, type_entreprise, SIRET, secteur, siteweb, 
+            telephone, rue, ville, code_postale, statut_contact, 
+            cfa, id_user 
+        } = req.body;
 
-        // On vérifie que le tableau contient au moins 1 résultat
+        // 2. LE VIDEUR : On vérifie si l'entreprise existe D'ABORD
+        const [entrepriseExistante] = await db.query(
+            "SELECT * FROM ENTREPRISE WHERE nom = ? AND id_user = ?", 
+            [nom, id_user]
+        );
+
         if (entrepriseExistante.length > 0) { 
+            // Si le tableau n'est pas vide, on bloque et on renvoie l'erreur 400
             return res.status(400).json({ error: "Vous avez déjà enregistré cette entreprise dans votre liste." });
         }
-            res.status(500).json({ error: "Erreur serveur" });
-     }
-})
+
+        // 3. L'INSERTION : Si on arrive ici, c'est que l'entreprise n'existe pas encore !
+        const sql = 'INSERT INTO ENTREPRISE (nom, type_entreprise, SIRET, secteur, siteweb, telephone, rue, ville, code_postal, statut_contact, cfa, id_user) VALUES(?,?,?,?,?,?,?,?,?,?,?,?)';
+        
+        // On passe bien toutes les variables, y compris code_postale
+        await db.query(sql, [nom, type_entreprise, SIRET, secteur, siteweb, telephone, rue, ville, code_postale, statut_contact, cfa, id_user]);
+        
+        // 4. On prévient React que tout est parfait
+        res.status(200).json({ message: 'Insertion réussie !' });
+
+    } catch (err) {
+        // Si la base de données a un vrai problème (serveur éteint, faute de frappe SQL...)
+        console.error("Erreur SQL critique :", err);
+        res.status(500).json({ error: "Erreur serveur lors de l'insertion." });
+    }
+});
 // Le :id dans l'URL devient disponible dans req.params.id
 router.get('/:id', async (req, res) => {
   try {
