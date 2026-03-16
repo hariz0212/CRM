@@ -16,8 +16,8 @@ function AjtEntreprise({ onClose, onSuccess }: AjtEntrepriseProps) {
     type_entreprise: '',
     SIRET: '',
     secteur: '',
-    site: '',
-    tel: '',
+    siteweb: '',
+    telephone: '',
     rue: '',
     ville: '',
     code_postale: '',
@@ -101,12 +101,12 @@ function AjtEntreprise({ onClose, onSuccess }: AjtEntrepriseProps) {
 
               <div>
                 <label className="block text-[10px] font-bold text-gray-500 uppercase mb-1">Site Web</label>
-                <input name="siteweb" onChange={changeIn} value={newEntreprise.site} type="url" className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none text-blue-600" placeholder="https://..." />
+                <input name="siteweb" onChange={changeIn} value={newEntreprise.siteweb} type="url" className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none text-blue-600" placeholder="https://..." />
               </div>
 
               <div>
                 <label className="block text-[10px] font-bold text-gray-500 uppercase mb-1">Téléphone</label>
-                <input name="telephone" onChange={changeIn} value={newEntreprise.tel} type="tel" className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none" placeholder="01 48 00 00 00" />
+                <input name="telephone" onChange={changeIn} value={newEntreprise.telephone} type="tel" className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none" placeholder="01 48 00 00 00" />
               </div>
             </div>
 
