@@ -72,14 +72,24 @@ function ModifierEntreprise({ entreprise, onClose, onRefresh }: ModifierEntrepri
               />
             </div>
 
-            {/* SIRET & Ville */}
-            <div className="space-y-1">
-              <label className="text-[10px] font-black uppercase text-slate-400 tracking-widest">SIRET</label>
+            {/* 🌟 NOUVEAU : Adresse complète 🌟 */}
+            <div className="md:col-span-2 space-y-1">
+              <label className="text-[10px] font-black uppercase text-slate-400 tracking-widest">Rue / Adresse</label>
               <input 
                 type="text"
                 className="w-full border-b-2 border-gray-100 focus:border-slate-500 outline-none py-2 text-sm"
-                value={formData.SIRET || ''}
-                onChange={(e) => setFormData({...formData, SIRET: e.target.value})}
+                value={formData.rue || ''}
+                onChange={(e) => setFormData({...formData, rue: e.target.value})}
+              />
+            </div>
+            
+            <div className="space-y-1">
+              <label className="text-[10px] font-black uppercase text-slate-400 tracking-widest">Code Postal</label>
+              <input 
+                type="text"
+                className="w-full border-b-2 border-gray-100 focus:border-slate-500 outline-none py-2 text-sm"
+                value={formData.code_postal || ''}
+                onChange={(e) => setFormData({...formData, code_postal: e.target.value})}
               />
             </div>
             <div className="space-y-1">
@@ -112,8 +122,43 @@ function ModifierEntreprise({ entreprise, onClose, onRefresh }: ModifierEntrepri
               />
             </div>
 
+            {/* 🌟 NOUVEAU : Statut, SIRET & Date 🌟 */}
+            <div className="space-y-1">
+              <label className="text-[10px] font-black uppercase text-slate-400 tracking-widest">SIRET</label>
+              <input 
+                type="text"
+                className="w-full border-b-2 border-gray-100 focus:border-slate-500 outline-none py-2 text-sm"
+                value={formData.SIRET || ''}
+                onChange={(e) => setFormData({...formData, SIRET: e.target.value})}
+              />
+            </div>
+            <div className="space-y-1">
+              <label className="text-[10px] font-black uppercase text-slate-400 tracking-widest">Statut du contact</label>
+              <select 
+                className="w-full border-b-2 border-gray-100 focus:border-slate-500 outline-none py-2 text-sm bg-transparent"
+                value={formData.statut_contact || ''}
+                onChange={(e) => setFormData({...formData, statut_contact: e.target.value as "Urgent" | "À contacter" | "En cours"})}
+              >
+                <option value="">Sélectionner un statut</option>
+                <option value="À contacter">À contacter</option>
+                <option value="En cours">En cours</option>
+                <option value="Converti">Converti</option>
+                <option value="Refus">Refus</option>
+              </select>
+            </div>
+
+            <div className="space-y-1">
+              <label className="text-[10px] font-black uppercase text-slate-400 tracking-widest">Dernier Contact</label>
+              <input 
+                type="date"
+                className="w-full border-b-2 border-gray-100 focus:border-slate-500 outline-none py-2 text-sm"
+                value={formData.date_dernier_contact || ''}
+                onChange={(e) => setFormData({...formData, date_dernier_contact: e.target.value})}
+              />
+            </div>
+
             {/* CFA Selection */}
-            <div className="md:col-span-2 space-y-1">
+            <div className="space-y-1">
               <label className="text-[10px] font-black uppercase text-slate-400 tracking-widest">CFA Associé</label>
               <select 
                 className="w-full border-b-2 border-gray-100 focus:border-slate-500 outline-none py-2 text-sm bg-transparent"
@@ -129,7 +174,7 @@ function ModifierEntreprise({ entreprise, onClose, onRefresh }: ModifierEntrepri
           </div>
 
           <div className="mt-10 flex justify-end gap-4">
-            <button type="button" onClick={onClose} className="px-6 py-2 text-xs font-bold uppercase text-gray-400">Annuler</button>
+            <button type="button" onClick={onClose} className="px-6 py-2 text-xs font-bold uppercase text-gray-400 hover:text-gray-600">Annuler</button>
             <button 
               type="submit" disabled={loading}
               className="bg-slate-800 hover:bg-slate-900 text-white px-8 py-3 rounded-xl text-xs font-bold uppercase shadow-lg flex items-center justify-center min-w-[140px]"

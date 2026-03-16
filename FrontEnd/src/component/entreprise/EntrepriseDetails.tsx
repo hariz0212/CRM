@@ -121,32 +121,56 @@ function EntrepriseDetail() {
                 </div>
 
               <div className="p-8 space-y-8">
-                {/* 1. INFOS TECHNIQUES RÉELLES */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                {/* 1. INFOS TECHNIQUES RÉELLES (Maintenant sur 3 colonnes) */}
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                  
+                  {/* Colonne 1 : Identité */}
                   <div className="space-y-4">
                     <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-widest border-b pb-1">Identité</h3>
                     <div className="grid grid-cols-2 gap-2 text-sm">
                       <p className="text-gray-500">Type:</p><p className="font-semibold text-right">{entreprise.type_entreprise || 'N/A'}</p>
-                      <p className="text-gray-500">Secteur:</p><p className="font-semibold text-right text-blue-600 text-xs">{entreprise.secteur}</p>
-                      <p className="text-gray-500">SIRET:</p><p className="font-mono text-[11px] text-right">{entreprise.SIRET}</p>
+                      <p className="text-gray-500">Secteur:</p><p className="font-semibold text-right text-blue-600 text-xs">{entreprise.secteur || 'N/A'}</p>
+                      <p className="text-gray-500">SIRET:</p><p className="font-mono text-[11px] text-right">{entreprise.SIRET || 'N/A'}</p>
                     </div>
                   </div>
+
+                  {/* Colonne 2 : Coordonnées */}
                   <div className="space-y-4">
                     <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-widest border-b pb-1">Coordonnées</h3>
                     <div className="grid grid-cols-2 gap-2 text-sm">
                       <p className="text-gray-500">Web:</p>
-                      <a href={`https://${entreprise.siteweb}`} target="_blank" className="text-blue-600 font-bold text-right truncate">
-                        {entreprise.siteweb || 'Non renseigné'}
+                      <a href={`https://${entreprise.siteweb}`} target="_blank" rel="noreferrer" className="text-blue-600 font-bold text-right truncate hover:underline">
+                        {entreprise.siteweb || 'N/A'}
                       </a>
-                      <p className="text-gray-500">Tél:</p><p className="font-semibold text-right">{entreprise.telephone || 'Non renseigné'}</p>
-                      <p className="text-gray-500">Dernier contact:</p>
-                      <input
-                        type="date"
-                        className="bg-gray-50 border border-gray-200 rounded-lg text-xs font-bold outline-none focus:ring-2 focus:ring-slate-300 text-right px-2 py-1"
-                        defaultValue={entreprise.date_dernier_contact ?? ''}
-                      />
+                      <p className="text-gray-500">Tél:</p><p className="font-semibold text-right">{entreprise.telephone || 'N/A'}</p>
+                      <p className="text-gray-500">Contacté le:</p>
+                      <p className="font-semibold text-right">
+                        {entreprise.date_dernier_contact 
+                          ? new Date(entreprise.date_dernier_contact).toLocaleDateString('fr-FR') 
+                          : 'Non contacté'}
+                      </p>
                     </div>
                   </div>
+
+                  {/* 🌟 NOUVELLE Colonne 3 : Localisation & Statut 🌟 */}
+                  <div className="space-y-4">
+                    <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-widest border-b pb-1">Localisation & Suivi</h3>
+                    <div className="grid grid-cols-2 gap-2 text-sm">
+                      <p className="text-gray-500">Adresse:</p>
+                      <p className="font-semibold text-right truncate" title={entreprise.rue}>{entreprise.rue || 'N/A'}</p>
+                      
+                      <p className="text-gray-500">Ville:</p>
+                      <p className="font-semibold text-right">
+                        {entreprise.code_postal || ''} {entreprise.ville || 'N/A'}
+                      </p>
+                      
+                      <p className="text-gray-500">Statut:</p>
+                      <p className="font-black text-right text-emerald-600 text-xs bg-emerald-50 rounded px-1 py-0.5 inline-block ml-auto">
+                        {entreprise.statut_contact || 'N/A'}
+                      </p>
+                    </div>
+                  </div>
+
                 </div>
 
                 {/* 2. COMMENTAIRES (Avec bouton enregistrer ajouté) */}
