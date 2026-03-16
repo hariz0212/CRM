@@ -27,6 +27,7 @@ router.post('/', async (req, res) => {
             telephone, rue, ville, code_postale, statut_contact, 
             cfa, id_user 
         } = req.body;
+        const cfaPropre = (cfa === "") ? null : cfa;
 
         // 2. LE VIDEUR : On vérifie si l'entreprise existe D'ABORD
         const [entrepriseExistante] = await db.query(
@@ -43,7 +44,7 @@ router.post('/', async (req, res) => {
         const sql = 'INSERT INTO ENTREPRISE (nom, type_entreprise, SIRET, secteur, siteweb, telephone, rue, ville, code_postal, statut_contact, cfa, id_user) VALUES(?,?,?,?,?,?,?,?,?,?,?,?)';
         
         // On passe bien toutes les variables, y compris code_postale
-        await db.query(sql, [nom, type_entreprise, SIRET, secteur, siteweb, telephone, rue, ville, code_postale, statut_contact, cfa, id_user]);
+        await db.query(sql, [nom, type_entreprise, SIRET, secteur, siteweb, telephone, rue, ville, code_postale, statut_contact, cfaPropre, id_user]);
         
         // 4. On prévient React que tout est parfait
         res.status(200).json({ message: 'Insertion réussie !' });
