@@ -26,7 +26,7 @@ router.post('/', async (req, res) => {
         res.status(200).json({ message: 'insertion réussie' });
     } catch (err) {
     // ✅ LA BONNE FAÇON DE VÉRIFIER
-        const [entrepriseExistante] = await pool.query("SELECT * FROM ENTREPRISE WHERE nom = ? AND id_user = ?", [nom, id_user]);
+        const [entrepriseExistante] = await db.query("SELECT * FROM ENTREPRISE WHERE nom = ? AND id_user = ?", [nom, id_user]);
 
         // On vérifie que le tableau contient au moins 1 résultat
         if (entrepriseExistante.length > 0) { 
