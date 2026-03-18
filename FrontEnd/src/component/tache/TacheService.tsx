@@ -9,9 +9,9 @@ export interface ITache {
   date_heure_rappel: string; // DATETIME
   libelle_tache: string;     // VARCHAR
   statut_tache: StatutTache; // ENUM
-  id_user: string;
-  id_entreprise: string;
-  id_contact: string | null;
+  id_user: string | number; 
+  id_entreprise?: string | number | null;
+  id_contact?: string | number | null;
   contact_nom?: string;
   contact_prenom?: string;
 }
@@ -23,9 +23,9 @@ export const  CONFIG_PRIORITE = {
 
 export interface SectionTachesProps {
   theme?: "indigo" | "slate";
-  id_entreprise: string;
-  id_contact?: string | null;
-  id_user: string;
+  id_user: number | string;
+  id_entreprise?: number | string; // 👈 Optionnel
+  id_contact?: number | string;    // 👈 Optionnel
 }
 
 export const addTache = async (tache: ITache) => {
@@ -34,6 +34,16 @@ export const addTache = async (tache: ITache) => {
         return reponse.data;
     } catch (err) {
         console.error("Erreur service addTache:", err);
+        throw err;
+    }
+};
+export const getAllTachesGlobales = async (id_user: string | number) => {
+    try {
+        // On appelle une route spécifique sur le backend (qu'on va créer juste après)
+        const reponse = await axios.get(`${url}taches/globales/${id_user}`);
+        return reponse.data;
+    } catch (err) {
+        console.error("Erreur service getAllTachesGlobales:", err);
         throw err;
     }
 };

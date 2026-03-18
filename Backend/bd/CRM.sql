@@ -26,6 +26,7 @@ CREATE TABLE ENTREPRISE (
     telephone VARCHAR(20),
     rue VARCHAR(255),
     ville VARCHAR(100),
+    CFA ENUM ('Leem','Trans-faire','numiA') DEFAULT NULL,
     code_postal VARCHAR(10), 
     statut_contact ENUM('À contacter', 'En cours', 'Urgent') DEFAULT 'À contacter',
     commentaire TEXT, -- Ajouté ici
@@ -57,7 +58,7 @@ CREATE TABLE TACHE (
     libelle_tache VARCHAR(255) NOT NULL,
     statut_tache ENUM('À contacter', 'En cours', 'Urgent') DEFAULT 'À contacter',
     id_user INT NOT NULL,
-    id_entreprise INT NOT NULL,
+    id_entreprise INT NULL,
     id_contact INT NULL, 
     PRIMARY KEY(id_tache),
     CONSTRAINT fk_tache_user FOREIGN KEY (id_user) REFERENCES USER(id_user),

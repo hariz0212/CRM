@@ -77,12 +77,23 @@ function Main() {
           {(["Urgent", "À contacter", "En cours"] as StatutTache[]).map((category) => {
             
             // Filtrage dynamique sur plusieurs champs (nom entreprise, contact ou libellé)
-            const filteredTasks = taches.filter(t => 
-              t.statut_tache === category && 
-              (t.libelle_tache.toLowerCase().includes(searchTerm.toLowerCase()) ||
-               (t.entreprise_nom?.toLowerCase().includes(searchTerm.toLowerCase())) ||
-               (t.contact_nom?.toLowerCase().includes(searchTerm.toLowerCase())))
-            );
+            // On met le mot de recherche en minuscules une seule fois
+            const term = searchTerm.toLowerCase();
+
+            const filteredTasks = taches.filter(t => {
+              // 1. Est-ce que c'est un mémo perso ? (Ni entreprise, ni contact)
+              const isMemoPerso = !t.id_entreprise && !t.id_contact;
+
+              // 2. On vérifie toutes les correspondances possibles
+              const matchLibelle = t.libelle_tache?.toLowerCase().includes(term);
+              const matchEntreprise = t.entreprise_nom?.toLowerCase().includes(term);
+              const matchContact = t.contact_nom?.toLowerCase().includes(term);
+              // 🌟 LA MAGIE EST LÀ : Si c'est un mémo, on vérifie si l'utilisateur a tapé "mémo" ou "personnel"
+              const matchMemoTexte = isMemoPerso && "mémo personnel memo".includes(term);
+
+              // 3. On garde la tâche si elle a le bon statut ET qu'elle correspond à un des critères
+              return t.statut_tache === category && (matchLibelle || matchEntreprise || matchContact || matchMemoTexte);
+            });
 
             const totalPages = Math.ceil(filteredTasks.length / tasksPerPage) || 1;
             const currentTasks = filteredTasks.slice(

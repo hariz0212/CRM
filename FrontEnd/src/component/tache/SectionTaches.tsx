@@ -1,52 +1,49 @@
 import { useEffect, useState } from "react";
-
-import { StatutTache,ITache, SectionTachesProps } from "./TacheService";
-
+import { StatutTache, ITache, SectionTachesProps } from "./TacheService";
 import CarteTache from "./CarteTache";
 import { getTachesEntreprise } from "../entreprise/entrepriseService";
 import { getTachesContact } from "../Contacts/ContactService";
-
-import { addTache } from "./TacheService";
-
-// ─── 3. SECTION PRINCIPALE 
+// 🌟 NOUVEAU : Il te faudra une fonction pour récupérer les tâches globales
+import { addTache, getAllTachesGlobales } from "./TacheService"; 
 
 export default function SectionTaches({ theme = "indigo", id_entreprise, id_contact, id_user }: SectionTachesProps) {
   const [onglet, setOnglet] = useState("liste");
   const [taches, setTaches] = useState<ITache[]>([]);
 
-
-const fetchTache = async () => {
+  const fetchTache = async () => {
     try {
         let resultats;
+        
+        // 🌟 NOUVELLE LOGIQUE HYBRIDE 🌟
         if (id_contact) {
-            resultats = await getTachesContact(id_contact, id_entreprise, id_user);
-        } else {
+            // Cas 1 : On est sur une fiche Contact
+              // 🌟 On ajoute || "" pour garantir qu'on envoie au pire un texte vide, et jamais undefined !
+              resultats = await getTachesContact(id_contact, id_entreprise || "", id_user);
+        } else if (id_entreprise) {
+            // Cas 2 : On est sur une fiche Entreprise
             resultats = await getTachesEntreprise(id_entreprise, id_user);
+        } else {
+            // Cas 3 : On est sur la page globale (ni contact, ni entreprise)
+            // 👉 Il faut créer cette fonction getAllTachesGlobales(id_user) dans TacheService.ts !
+            resultats = await getAllTachesGlobales(id_user); 
         }
 
-        // ✅ LA SÉCURITÉ : On vérifie si c'est un tableau
         if (Array.isArray(resultats)) {
             setTaches(resultats);
-            console.log(resultats);
         } else {
-            // Si c'est un objet, on met un tableau vide pour ne pas faire crash le .map()
             console.error("L'API n'a pas renvoyé un tableau :", resultats);
             setTaches([]); 
         }
 
     } catch (err) {
         console.error("Erreur API :", err);
-        setTaches([]); // En cas d'erreur réseau, on garde un tableau vide
+        setTaches([]); 
     }
-
   };
 
-
-useEffect(() => {
-  fetchTache();
-  
-  // 2. Le tableau de dépendances : on ne relance que si l'un de ces IDs change
-}, [id_contact, id_entreprise, id_user]);
+  useEffect(() => {
+    fetchTache();
+  }, [id_contact, id_entreprise, id_user]);
   
   // État du formulaire
   const [nouveauLibelle, setNouveauLibelle] = useState("");
@@ -57,7 +54,6 @@ useEffect(() => {
     { accent: "from-indigo-700 to-purple-600", titre: "text-indigo-400", bouton: "bg-indigo-700", anneau: "focus:ring-indigo-300" } :
     { accent: "from-slate-800 to-slate-600", titre: "text-slate-400", bouton: "bg-slate-800", anneau: "focus:ring-slate-300" };
 
-  // Fonction pour enregistrer (Simulation de l'appel API)
   const enregistrerTache = async () => {
     if (!nouveauLibelle || !dateProgrammee) {
         return alert("Veuillez saisir une description et une date.");
@@ -65,32 +61,28 @@ useEffect(() => {
     const datePourMySQL = dateProgrammee.replace('T', ' ') + ':00';
 
     const tacheASauver: ITache = {
-      date_heure_rappel: datePourMySQL, // On prend l'heure actuelle
+      date_heure_rappel: datePourMySQL,
       libelle_tache: nouveauLibelle,
       statut_tache: statutSelectionne,
       id_user: id_user,
-      id_entreprise: id_entreprise,
+      // 🌟 SÉCURITÉ : on s'assure d'envoyer null si l'ID n'est pas fourni
+      id_entreprise: id_entreprise || null,
       id_contact: id_contact || null
     };
 
- try {
-        // 1. Appel API
+    try {
         await addTache(tacheASauver);
-        
-        // 2. Reset du formulaire
         setNouveauLibelle("");
-        setDateProgrammee("")
+        setDateProgrammee("");
         setOnglet("liste");
-        
-        // 3. Rafraîchissement de la liste (on rappelle la fonction de chargement)
-        // Assure-toi que fetchTache est accessible ici
         fetchTache(); 
-        
         alert("Action enregistrée !");
     } catch (err) {
         alert("Impossible d'enregistrer la tâche.");
     }
   };
+
+  // ... (Le reste de ton code JSX avec le return() reste exactement le même !) ...
 
   return (
     <div className="space-y-4 pt-4">
