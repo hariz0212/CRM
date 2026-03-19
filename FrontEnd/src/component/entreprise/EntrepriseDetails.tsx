@@ -238,7 +238,7 @@ function EntrepriseDetail() {
                               </p>
                             </div>
                             <span className="bg-indigo-50 text-indigo-600 w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold">
-                              {contact.prenom.charAt(0)}{contact.nom.charAt(0)}
+                              {(contact.prenom?.charAt(0) || "")}{(contact.nom?.charAt(0) || "")}
                             </span>
                           </div>
 
