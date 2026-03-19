@@ -8,8 +8,10 @@ import { useNavigate } from "react-router-dom";
 import SectionTaches from "../tache/SectionTaches";
 import { updateComm } from "./entrepriseService";
 import ModifierEntreprise from "./ModiifierEntreprise";
+import AjtContact from "../Contacts/AjtContacts";
 
 function EntrepriseDetail() {
+  const [isContactModalOpen,setIsContactModalOpen]=useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const navigate=useNavigate();
   const id_user=getUserid();
@@ -19,7 +21,6 @@ function EntrepriseDetail() {
   const [AllEntreprise, setAllEntreprise] = useState<Entreprise[]>([]);
   const[commentaire,setCommentaire]=useState('');
 
-  useEffect(() => {
     const fetchDetail = async () => {
     try {
       setLoading(true);
@@ -41,6 +42,9 @@ function EntrepriseDetail() {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    
 
     fetchDetail();
   }, [id]);
@@ -195,6 +199,17 @@ function EntrepriseDetail() {
 
                 {/* 3. LISTE DES CONTACTS */}
                 <div className="space-y-4">
+                  {/* 🌟 LE HEADER AVEC LE BOUTON 🌟 */}
+                  <div className="flex items-center justify-between border-b pb-1">
+                    <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Contacts de l'entreprise</h3>
+                    <button 
+                      onClick={() => setIsContactModalOpen(true)}
+                      className="bg-indigo-50 hover:bg-indigo-100 text-indigo-600 px-3 py-1 rounded-lg text-[9px] font-black uppercase tracking-widest transition-colors border border-indigo-100 shadow-sm active:scale-95"
+                    >
+                      + Ajouter un contact
+                    </button>
+                  </div>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
                   <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-widest border-b pb-1">Contacts de l'entreprise</h3>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div className="p-3 border border-gray-100 rounded-lg bg-slate-50 flex items-center gap-3">
@@ -206,6 +221,8 @@ function EntrepriseDetail() {
                     </div>
                   </div>
                 </div>
+                
+                
 
                 {/* 4. GESTION DES TÂCHES */}
                 <SectionTaches id_entreprise={entreprise.id_entreprise} id_user={id_user} />
@@ -244,6 +261,14 @@ function EntrepriseDetail() {
             onClose={() => setIsEditModalOpen(false)} 
             onRefresh={(updated) => setEntreprise(updated)} 
           />
+        )}
+        {isContactModalOpen &&(
+          <AjtContact
+          onClose={() => setIsContactModalOpen(false)} 
+          onSuccess={() => { fetchDetail(); setIsContactModalOpen(false); }}
+          entreprise={[entreprise]} 
+          />
+
         )}
       </main>
     </div>

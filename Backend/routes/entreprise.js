@@ -45,10 +45,13 @@ router.post('/', async (req, res) => {
         const sql = 'INSERT INTO ENTREPRISE (nom, type_entreprise, SIRET, secteur, siteweb, telephone, rue, ville, code_postal, statut_contact, cfa, id_user) VALUES(?,?,?,?,?,?,?,?,?,?,?,?)';
         
         // On passe bien toutes les variables, y compris code_postale
-        await db.query(sql, [nom, type_entreprise, siretPropre, secteur, siteweb, telephone, rue, ville, code_postale, statut_contact, cfaPropre, id_user]);
+        const [result]=await db.query(sql, [nom, type_entreprise, siretPropre, secteur, siteweb, telephone, rue, ville, code_postale, statut_contact, cfaPropre, id_user]);
         
         // 4. On prévient React que tout est parfait
-        res.status(200).json({ message: 'Insertion réussie !' });
+        res.status(200).json({ 
+            message: 'Entreprise créée', 
+            id_entreprise: result.insertId // 👈 C'est ÇA qui permet à React de faire la suite !
+        });
 
     } catch (err) {
         // Si la base de données a un vrai problème (serveur éteint, faute de frappe SQL...)

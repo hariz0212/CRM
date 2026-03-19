@@ -29,6 +29,7 @@ router.get('/', async (req, res) => {
 });
 
 router.post('/', async (req,res)=>{
+    console.log("Données contact reçues depuis React :", req.body);
     try {
         const{nom,prenom,fonction,telephone,email,statut_contact,linkedin,id_entreprise,id_user}=req.body;
         const sql='INSERT INTO CONTACT (nom,prenom,fonction,telephone,email,statut_contact,linkedin,id_entreprise,id_user) VALUES(?,?,?,?,?,?,?,?,?)';
