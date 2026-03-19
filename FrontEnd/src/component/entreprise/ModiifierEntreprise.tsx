@@ -18,6 +18,7 @@ function ModifierEntreprise({ entreprise, onClose, onRefresh }: ModifierEntrepri
     e.preventDefault();
     setLoading(true);
     try {
+      console.log(formData)
       await updateEntreprise(entreprise.id_entreprise, { ...formData, id_user });
       onRefresh(formData);
       onClose();
@@ -78,7 +79,7 @@ function ModifierEntreprise({ entreprise, onClose, onRefresh }: ModifierEntrepri
               <input 
                 type="text"
                 className="w-full border-b-2 border-gray-100 focus:border-slate-500 outline-none py-2 text-sm"
-                value={formData.rue || ''}
+                value={formData.rue||''}
                 onChange={(e) => setFormData({...formData, rue: e.target.value})}
               />
             </div>
@@ -97,7 +98,7 @@ function ModifierEntreprise({ entreprise, onClose, onRefresh }: ModifierEntrepri
               <input 
                 type="text"
                 className="w-full border-b-2 border-gray-100 focus:border-slate-500 outline-none py-2 text-sm"
-                value={formData.ville || ''}
+                value={formData.ville||''}
                 onChange={(e) => setFormData({...formData, ville: e.target.value})}
               />
             </div>
@@ -152,7 +153,8 @@ function ModifierEntreprise({ entreprise, onClose, onRefresh }: ModifierEntrepri
               <input 
                 type="date"
                 className="w-full border-b-2 border-gray-100 focus:border-slate-500 outline-none py-2 text-sm"
-                value={formData.date_dernier_contact || ''}
+                // 🌟 L'ASTUCE ICI : On coupe la date pour ne garder que "YYYY-MM-DD"
+                value={formData.date_dernier_contact ? formData.date_dernier_contact.substring(0, 10) : ''}
                 onChange={(e) => setFormData({...formData, date_dernier_contact: e.target.value})}
               />
             </div>

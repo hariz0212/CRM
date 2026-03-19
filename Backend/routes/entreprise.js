@@ -126,17 +126,45 @@ router.delete('/:id', async (req, res) => {
 });
 router.put('/:id', async (req, res) => {
     const { id } = req.params;
-    const { nom, type_entreprise, secteur, SIRET, siteweb, telephone, ville, id_user } = req.body;
+    
+    // 1. On récupère toutes les variables depuis React
+    const { 
+        nom, type_entreprise, secteur, SIRET, siteweb, telephone, 
+        ville, rue,code_postal, 
+        statut_contact, cfa, id_user 
+    } = req.body;
 
-    const sql = `UPDATE ENTREPRISE SET 
-        nom = ?, type_entreprise = ?, secteur = ?, SIRET = ?, siteweb = ?, telephone = ?, ville = ? 
-        WHERE id_entreprise = ? AND id_user = ?`;
+    // 2. La requête avec EXACTEMENT 14 "?"
+    const sql = `
+        UPDATE ENTREPRISE SET 
+            nom = ?, type_entreprise = ?, secteur = ?, SIRET = ?, 
+            siteweb = ?, telephone = ?, ville = ?, rue = ?, code_postal = ?,
+            statut_contact = ?,  cfa = ?
+        WHERE id_entreprise = ? AND id_user = ?
+    `;
 
     try {
-        await db.query(sql, [nom, type_entreprise, secteur, SIRET, siteweb, telephone, ville, id, id_user]);
-        res.json({ message: "Entreprise mise à jour !" });
+        // 3. Le tableau avec EXACTEMENT 14 variables dans le MÊME ORDRE
+        await db.query(sql, [
+            nom, 
+            type_entreprise, 
+            secteur, 
+            SIRET, 
+            siteweb, 
+            telephone, 
+            ville, 
+            rue, 
+            code_postal,               // 👈 Remplace le 9ème ? (code_postal)
+            statut_contact || null,    // 👈 Remplace le 10ème ?
+            cfa || null,               // 👈 Remplace le 12ème ?
+            id,                        // 👈 Remplace le 13ème ? (WHERE id_entreprise)
+            id_user                    // 👈 Remplace le 14ème ? (AND id_user)
+        ]);
+        
+        res.status(200).json({ message: "Entreprise mise à jour avec succès !" });
     } catch (err) {
-        res.status(500).json({ error: err.message });
+        console.error("Erreur UPDATE entreprise :", err);
+        res.status(500).json({ error: "Erreur lors de la modification" });
     }
 });
 

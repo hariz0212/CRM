@@ -37,7 +37,7 @@ function EntrepriseDetail() {
         setEntreprise(detailData);
         setAllEntreprise(listData);
         setContactsEntreprise(ContactsData);
-        setCommentaire(detailData.commentaire);
+        setCommentaire(detailData.commentaire||'');
       }
     } catch (err) {
       console.error("Erreur de récupération globale:", err);
