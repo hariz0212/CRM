@@ -17,6 +17,30 @@ router.get('/', async (req,res)=>{
 
 })
 
+router.get('/contacts/:id', async (req, res) => {
+    // 1. Ici, "id" représente l'id de l'ENTREPRISE
+    const { id } = req.params;
+
+    try {
+        // 2. On demande à MySQL tous les contacts qui ont ce fameux id_entreprise
+        const sql = `
+            SELECT * FROM CONTACT 
+            WHERE id_entreprise = ? 
+            ORDER BY nom ASC
+        `;
+        
+        // 3. On exécute
+        const [contacts] = await db.query(sql, [id]);
+
+        // 4. On renvoie le tableau de contacts (s'il n'y en a pas, ça renverra juste un tableau vide [], ce qui est parfait pour React !)
+        res.status(200).json(contacts);
+
+    } catch (err) {
+        console.error("Erreur lors de la récupération des contacts de l'entreprise :", err);
+        res.status(500).json({ error: "Erreur serveur lors de la récupération des contacts" });
+    }
+});
+
 router.post('/', async (req, res) => {
     console.log("Données reçues depuis React :", req.body);
     

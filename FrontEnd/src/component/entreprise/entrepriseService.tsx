@@ -57,6 +57,7 @@ export const updateEntreprise = async (id_entreprise: string | number, data: any
         throw err;
     }
 };
+
 export const updateComm= async(data:string,id_entreprise:string)=>{
     try {
         const reponse= await axios.put(`${url}entreprises/commentaire/${id_entreprise}`,{commentaire:data});
@@ -102,3 +103,13 @@ export const getTachesEntreprise = async (id_entreprise: string | number, id_use
         throw err;
     }
 }
+
+export const getContactEntrerpise = async (id_entreprise: string | number) => {
+    try {
+        const reponse = await axios.get(`${url}entreprises/contacts/${id_entreprise}`);
+        return reponse.data;
+    } catch (err) {
+        console.error(`Erreur lors de la récupération des contacts pour l'entreprise ${id_entreprise}:`, err);
+        throw err; // On renvoie l'erreur pour la gérer dans le composant
+    }
+};

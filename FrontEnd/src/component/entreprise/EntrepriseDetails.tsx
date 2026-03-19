@@ -2,7 +2,7 @@ import { useParams, NavLink } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { getEntrepriseById, Entreprise, getAllEntreprise, deleteEntrepriseById } from "./entrepriseService";
 import { ClipLoader } from "react-spinners";
-
+import { getContactEntrerpise } from "./entrepriseService";
 import { getUserid } from "../login/loginService";
 import { useNavigate } from "react-router-dom";
 import SectionTaches from "../tache/SectionTaches";
@@ -20,20 +20,23 @@ function EntrepriseDetail() {
   const [loading, setLoading] = useState(true);
   const [AllEntreprise, setAllEntreprise] = useState<Entreprise[]>([]);
   const[commentaire,setCommentaire]=useState('');
+  const [contactsEntreprise, setContactsEntreprise] = useState<any[]>([]);
 
     const fetchDetail = async () => {
     try {
       setLoading(true);
       if (id) {
         // On lance les deux promesses simultanément
-        const [detailData, listData] = await Promise.all([
+        const [detailData, listData,ContactsData] = await Promise.all([
           getEntrepriseById(id),
-          getAllEntreprise(id_user)
+          getAllEntreprise(id_user),
+          getContactEntrerpise(id)
         ]);
 
         // Une fois que les deux sont arrivées, on met à jour les états
         setEntreprise(detailData);
         setAllEntreprise(listData);
+        setContactsEntreprise(ContactsData);
         setCommentaire(detailData.commentaire);
       }
     } catch (err) {
@@ -209,16 +212,58 @@ function EntrepriseDetail() {
                       + Ajouter un contact
                     </button>
                   </div>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
-                  <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-widest border-b pb-1">Contacts de l'entreprise</h3>
+                  {/* 🌟 LA VRAIE LISTE DES CONTACTS 🌟 */}
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div className="p-3 border border-gray-100 rounded-lg bg-slate-50 flex items-center gap-3">
-                      <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center text-blue-600 font-bold">?</div>
-                      <div>
-                        <p className="text-xs font-bold text-gray-800">Voir l'annuaire</p>
-                        <p className="text-[10px] text-gray-500 italic">Pour les contacts liés</p>
+                    
+                    {contactsEntreprise.length > 0 ? (
+                      contactsEntreprise.map((contact) => (
+                        <NavLink 
+                          key={contact.id_contact}
+                          to={`/contacts/${contact.id_contact}`} // Lien vers la fiche du contact
+                          className="p-4 border border-indigo-100 rounded-xl bg-white shadow-sm hover:shadow-md transition-all flex flex-col gap-2 group cursor-pointer relative overflow-hidden"
+                        >
+                          {/* Petite barre de couleur sur le côté selon le statut */}
+                          <div className={`absolute left-0 top-0 bottom-0 w-1 ${
+                            contact.statut_contact === 'Urgent' ? 'bg-red-500' : 
+                            contact.statut_contact === 'En cours' ? 'bg-amber-500' : 'bg-blue-500'
+                          }`}></div>
+
+                          <div className="flex justify-between items-start pl-2">
+                            <div>
+                              <p className="text-sm font-black text-gray-800 group-hover:text-indigo-600 transition-colors">
+                                {contact.prenom} {contact.nom}
+                              </p>
+                              <p className="text-[10px] text-gray-500 font-bold uppercase tracking-widest mt-0.5">
+                                {contact.fonction || "Fonction non renseignée"}
+                              </p>
+                            </div>
+                            <span className="bg-indigo-50 text-indigo-600 w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold">
+                              {contact.prenom.charAt(0)}{contact.nom.charAt(0)}
+                            </span>
+                          </div>
+
+                          <div className="pl-2 mt-2 space-y-1">
+                            {contact.email && (
+                              <p className="text-xs text-gray-600 flex items-center gap-2">
+                                <span>✉️</span> <span className="truncate">{contact.email}</span>
+                              </p>
+                            )}
+                            {contact.telephone && (
+                              <p className="text-xs text-gray-600 flex items-center gap-2">
+                                <span>📞</span> <span>{contact.telephone}</span>
+                              </p>
+                            )}
+                          </div>
+                        </NavLink>
+                      ))
+                    ) : (
+                      // Ce qu'on affiche si l'entreprise n'a pas encore de contact
+                      <div className="md:col-span-2 p-8 border border-dashed border-gray-300 rounded-xl bg-gray-50 flex flex-col items-center justify-center text-center">
+                        <span className="text-3xl mb-2 opacity-50">👥</span>
+                        <p className="text-xs font-bold text-gray-500 uppercase tracking-widest">Aucun contact enregistré</p>
+                        <p className="text-[10px] text-gray-400 mt-1">Cliquez sur le bouton pour en ajouter un.</p>
                       </div>
-                    </div>
+                    )}
                   </div>
                 </div>
                 
