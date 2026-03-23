@@ -4,8 +4,9 @@ import { getAllTache } from './MainService'; // Ton service
 import { getUserid } from '../login/loginService';
 import { StatutTache } from '../tache/TacheService'; // On réutilise le type
 import { Tachemain } from './Tachemain';
-
+import SectionTaches from '../tache/SectionTaches';
 function Main() {
+  const [isTachePersoModalOpen,setIsTachePersoModalOpen]=useState(false);
   const id_user = getUserid();
   const [taches, setTaches] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -51,24 +52,56 @@ function Main() {
       <main className="max-w-7xl mx-auto">
         
         {/* HEADER */}
-        <div className="mb-8 flex flex-col md:flex-row justify-between items-center bg-white p-5 rounded-2xl shadow-sm border border-gray-100 gap-4">
+       {/* HEADER DYNAMIQUE ET RESPONSIVE */}
+        <div className="mb-8 flex flex-col md:flex-row justify-between items-start md:items-center bg-white p-6 rounded-2xl shadow-sm border border-gray-100 gap-6 relative overflow-hidden">
+          
+          {/* Petit effet visuel optionnel en fond (bulle bleue floue) */}
+          <div className="absolute top-0 right-0 w-32 h-32 bg-blue-50 rounded-full blur-3xl -z-10 opacity-60 translate-x-1/2 -translate-y-1/2"></div>
+
+          {/* 1. TITRES */}
           <div>
-            <h1 className="text-2xl font-black text-blue-900 uppercase tracking-tighter italic">Tableau de Bord</h1>
-            <p className="text-[10px] text-gray-400 font-bold uppercase tracking-widest">Flux opérationnel • Mme Benidir</p>
+            <h1 className="text-2xl font-black text-blue-900 uppercase tracking-tighter italic flex items-center gap-2">
+              Tableau de Bord
+            </h1>
+            <p className="text-[10px] text-gray-400 font-bold uppercase tracking-widest mt-1">
+              Espace Trello & Tâches
+            </p>
           </div>
           
-          <div className="relative w-full max-w-md">
-            <input 
-              type="text" 
-              placeholder="Rechercher une entreprise, un contact ou une tâche..." 
-              value={searchTerm}
-              onChange={(e) => {
-                setSearchTerm(e.target.value);
-                setCurrentPage({"Urgent": 1, "À contacter": 1, "En cours": 1});
-              }}
-              className="w-full pl-10 pr-4 py-2 bg-gray-50 border border-gray-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-blue-500 transition-all"
-            />
-            <span className="absolute left-3 top-2.5 opacity-30">🔍</span>
+          {/* 2. CONTRÔLES (Recherche + Bouton) */}
+          <div className="flex flex-col sm:flex-row items-center gap-3 w-full md:w-auto">
+            
+            {/* Barre de recherche */}
+            <div className="relative w-full sm:w-80 group">
+              <input 
+                type="text" 
+                placeholder="Rechercher (ex: mémo, nom...)" 
+                value={searchTerm}
+                onChange={(e) => {
+                  setSearchTerm(e.target.value);
+                  setCurrentPage({"Urgent": 1, "À contacter": 1, "En cours": 1});
+                }}
+                className="w-full pl-10 pr-4 py-2.5 bg-gray-50 hover:bg-gray-100 focus:bg-white border border-gray-200 focus:border-blue-300 rounded-xl text-sm outline-none focus:ring-4 focus:ring-blue-500/10 transition-all text-gray-700 placeholder:text-gray-400"
+              />
+              <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-blue-500 transition-colors">
+                {/* Une vraie icône SVG plus propre que l'émoji 🔍 */}
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor" className="w-4 h-4">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
+                </svg>
+              </span>
+            </div>
+
+            {/* Bouton Ajout Tâche Perso */}
+            <button 
+              onClick={() => setIsTachePersoModalOpen(true)}
+              className="w-full sm:w-auto shrink-0 bg-blue-900 hover:bg-blue-800 text-white px-5 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all shadow-lg shadow-blue-900/20 active:scale-95 flex items-center justify-center gap-2 group border border-blue-800"
+            >
+              <span className="bg-white/20 text-white rounded-full w-4 h-4 flex items-center justify-center text-xs group-hover:bg-white/30 transition-colors">
+                +
+              </span>
+              Tâche Perso
+            </button>
+            
           </div>
         </div>
 
@@ -145,6 +178,36 @@ function Main() {
             );
           })}
         </div>
+        {/* 🌟 LA MODALE TÂCHE PERSO 🌟 */}
+        {isTachePersoModalOpen && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm px-4">
+            <div className="bg-white rounded-2xl shadow-2xl w-full max-w-lg p-6 relative animate-in fade-in zoom-in duration-200">
+              
+              {/* Bouton pour fermer */}
+              <button 
+                onClick={() => {
+                  setIsTachePersoModalOpen(false);
+                  chargerTaches(); // On rafraîchit le tableau de bord quand on ferme !
+                }}
+                className="absolute top-4 right-4 text-gray-400 hover:text-gray-800 text-xl font-bold"
+              >
+                &times;
+              </button>
+
+              <h2 className="text-lg font-black text-slate-800 uppercase tracking-widest border-b pb-3 mb-4">
+                📝 Nouvelle Tâche Personnelle
+              </h2>
+
+              {/* 🌟 ON UTILISE TON COMPOSANT DIRECTEMENT ! 🌟 */}
+              {/* Note: on ne lui passe ni id_entreprise ni id_contact, donc ton code comprendra que c'est une tâche globale (perso) */}
+              <SectionTaches 
+                theme="slate" 
+                id_user={id_user} 
+              />
+              
+            </div>
+          </div>
+        )}
       </main>
     </div>
   );
