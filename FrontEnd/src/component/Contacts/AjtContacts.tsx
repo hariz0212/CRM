@@ -9,9 +9,13 @@ interface AjtContactProps {
   entreprise: Entreprise[];
 }
 
-
 function AjtContact({ onClose, onSuccess, entreprise }: AjtContactProps) {
-  const id_user= getUserid();
+  const id_user = getUserid();
+  
+  // 🌟 NOUVEAU : On ajoute l'état pour gérer l'erreur de l'API
+  const [erreurApi, setErreurApi] = useState<string | null>(null);
+
+  // Correction de la syntaxe du useState
   const [newContact, setNewContact] = useState({
     nom: '',
     prenom: '',
@@ -22,7 +26,7 @@ function AjtContact({ onClose, onSuccess, entreprise }: AjtContactProps) {
     linkedin: '',
     commentaire: '',
     id_entreprise: '',
-    nom_entreprise:'',
+    nom_entreprise: '',
     id_user: id_user,
   });
 
@@ -36,29 +40,30 @@ function AjtContact({ onClose, onSuccess, entreprise }: AjtContactProps) {
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
+    setErreurApi(null); // 🌟 On efface l'ancienne erreur avant de réessayer
 
-    if(!newContact.id_entreprise){
-      alert('Veulleiz selectionner une entrerprise');
+    if (!newContact.id_entreprise) {
+      setErreurApi('Veuillez sélectionner une entreprise.');
       return;
     }
+    
     try {
       await AddContact(newContact);
-      alert('Contact créé avec succès');
       onSuccess();
       onClose();
-    } catch (error) {
-      console.log(newContact);
-      console.error("Erreur lors de l'ajout :", error);
-      alert('Une erreur est survenue');
+    } catch (err: any) {
+      console.error("Erreur lors de l'ajout :", err);
+      // 🌟 On attrape le message précis du backend (ou le fallback)
+      setErreurApi(err.message || 'Une erreur est survenue lors de la création.');
     }
   }
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm px-4">
-
       <div className="bg-white rounded-2xl shadow-2xl w-full max-w-2xl p-8 border border-indigo-50 max-h-[95vh] overflow-y-auto">
 
-        <div className="mb-8 border-b pb-4 flex justify-between items-end">
+        {/* HEADER MODALE */}
+        <div className="mb-6 border-b pb-4 flex justify-between items-end">
           <div>
             <h2 className="text-2xl font-bold text-gray-800 tracking-tight">Nouveau Contact</h2>
             <p className="text-[10px] text-indigo-400 uppercase font-black tracking-widest mt-1">Ajouter une personne physique</p>
@@ -66,6 +71,21 @@ function AjtContact({ onClose, onSuccess, entreprise }: AjtContactProps) {
           <div className="text-3xl bg-indigo-50 p-2 rounded-xl">👤</div>
         </div>
 
+        {/* 🌟 NOUVEAU : LA BOÎTE D'ERREUR ROUGE 🌟 */}
+        {erreurApi && (
+          <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-xl flex items-start gap-3 animate-in fade-in slide-in-from-top-2">
+            <span className="text-red-500 text-lg mt-0.5">⚠️</span>
+            <div>
+              <h4 className="text-[10px] font-black uppercase tracking-widest text-red-800">Erreur</h4>
+              <p className="text-xs text-red-600 font-medium mt-0.5">{erreurApi}</p>
+            </div>
+            <button type="button" onClick={() => setErreurApi(null)} className="ml-auto text-red-400 hover:text-red-800">
+              ✕
+            </button>
+          </div>
+        )}
+
+        {/* FORMULAIRE */}
         <form onSubmit={handleSubmit}>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
 
@@ -84,12 +104,13 @@ function AjtContact({ onClose, onSuccess, entreprise }: AjtContactProps) {
               </div>
 
               <div>
-                <label className="block text-[10px] font-bold text-gray-400 uppercase mb-1 tracking-wider">Nom de famille</label>
+                <label className="block text-[10px] font-bold text-gray-400 uppercase mb-1 tracking-wider">Nom de famille <span className="text-red-400">*</span></label>
                 <input
                   onChange={changeIn}
                   value={newContact.nom}
                   name="nom"
                   type="text"
+                  required
                   className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-500 outline-none transition-all placeholder:text-gray-300"
                   placeholder="Ex: DUPONT"
                 />
@@ -161,7 +182,7 @@ function AjtContact({ onClose, onSuccess, entreprise }: AjtContactProps) {
               </div>
 
               <div>
-                <label className="block text-[10px] font-bold text-gray-400 uppercase mb-1 tracking-wider">Entreprise rattachée</label>
+                <label className="block text-[10px] font-bold text-gray-400 uppercase mb-1 tracking-wider">Entreprise rattachée <span className="text-red-400">*</span></label>
                 <select
                   onChange={changeIn}
                   value={newContact.id_entreprise}
@@ -176,12 +197,10 @@ function AjtContact({ onClose, onSuccess, entreprise }: AjtContactProps) {
               </div>
             </div>
 
-            {/* Infos complémentaires — Pleine largeur */}
-            
-
           </div>
 
-          <div className="mt-10 flex justify-end items-center gap-4 border-t pt-6">
+          {/* FOOTER MODALE */}
+          <div className="mt-8 flex justify-end items-center gap-4 border-t pt-6">
             <button
               type="button"
               onClick={onClose}

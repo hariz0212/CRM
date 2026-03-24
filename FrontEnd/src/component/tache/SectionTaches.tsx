@@ -49,6 +49,7 @@ export default function SectionTaches({ theme = "indigo", id_entreprise, id_cont
   const [nouveauLibelle, setNouveauLibelle] = useState("");
   const [statutSelectionne, setStatutSelectionne] = useState<StatutTache>("À contacter");
   const [dateProgrammee, setDateProgrammee] = useState("");
+  const [infoTache, setInfoTache] = useState("");
 
   const t = theme === "indigo" ? 
     { accent: "from-indigo-700 to-purple-600", titre: "text-indigo-400", bouton: "bg-indigo-700", anneau: "focus:ring-indigo-300" } :
@@ -64,6 +65,7 @@ export default function SectionTaches({ theme = "indigo", id_entreprise, id_cont
       date_heure_rappel: datePourMySQL,
       libelle_tache: nouveauLibelle,
       statut_tache: statutSelectionne,
+      info: infoTache,
       id_user: id_user,
       // 🌟 SÉCURITÉ : on s'assure d'envoyer null si l'ID n'est pas fourni
       id_entreprise: id_entreprise || null,
@@ -74,6 +76,7 @@ export default function SectionTaches({ theme = "indigo", id_entreprise, id_cont
         await addTache(tacheASauver);
         setNouveauLibelle("");
         setDateProgrammee("");
+        setInfoTache("");
         setOnglet("liste");
         fetchTache(); 
         alert("Action enregistrée !");
@@ -143,6 +146,15 @@ export default function SectionTaches({ theme = "indigo", id_entreprise, id_cont
               onChange={(e) => setNouveauLibelle(e.target.value)}
               className={`w-full p-3 bg-gray-50 border border-gray-100 rounded-xl text-xs outline-none focus:ring-2 ${t.anneau} italic text-gray-600 resize-none`}
               placeholder="Ex: Envoyer le contrat par email..."
+            />
+          </div>
+          <div>
+            <label className="block text-[9px] font-bold text-gray-400 uppercase tracking-widest mb-2">Informations complémentaires</label>
+            <textarea
+              value={infoTache}
+              onChange={(e) => setInfoTache(e.target.value)}
+              className={`w-full p-3 bg-gray-50 border border-gray-100 rounded-xl text-xs outline-none focus:ring-2 ${t.anneau} text-gray-600 resize-none h-20`}
+              placeholder="Liens utiles, notes détaillées, contexte..."
             />
           </div>
 

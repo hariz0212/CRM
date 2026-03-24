@@ -56,6 +56,7 @@ CREATE TABLE TACHE (
     id_tache INT AUTO_INCREMENT,
     date_heure_rappel DATETIME NOT NULL, 
     libelle_tache VARCHAR(255) NOT NULL,
+    info TEXT,
     statut_tache ENUM('À contacter', 'En cours', 'Urgent') DEFAULT 'À contacter',
     id_user INT NOT NULL,
     id_entreprise INT NULL,

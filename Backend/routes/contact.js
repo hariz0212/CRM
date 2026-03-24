@@ -31,18 +31,39 @@ router.get('/', async (req, res) => {
 router.post('/', async (req,res)=>{
     console.log("Données contact reçues depuis React :", req.body);
     try {
-        const{nom,prenom,fonction,telephone,email,statut_contact,linkedin,id_entreprise,id_user}=req.body;
-        const sql='INSERT INTO CONTACT (nom,prenom,fonction,telephone,email,statut_contact,linkedin,id_entreprise,id_user) VALUES(?,?,?,?,?,?,?,?,?)';
-        await db.query(sql,[nom,prenom,fonction,telephone,email,statut_contact,linkedin,id_entreprise,id_user]);
-        res.status(200).json({message:'insertion réussit'})
+        const { nom, prenom, fonction, telephone, email, statut_contact, linkedin, id_entreprise, id_user } = req.body;
+        
+        // 🌟 CORRECTION 1 : On transforme les textes vides en "null" pour MySQL
+        const emailPropre = (email === "") ? null : email;
+        const telPropre = (telephone === "") ? null : telephone;
+        const linkedinPropre = (linkedin === "") ? null : linkedin;
+        const fonctionPropre = (fonction === "") ? null : fonction;
+
+        const sql = 'INSERT INTO CONTACT (nom, prenom, fonction, telephone, email, statut_contact, linkedin, id_entreprise, id_user) VALUES(?,?,?,?,?,?,?,?,?)';
+        
+        // On envoie nos variables "Propres" dans le tableau
+        await db.query(sql, [
+            nom, 
+            prenom, 
+            fonctionPropre, 
+            telPropre, 
+            emailPropre, 
+            statut_contact, 
+            linkedinPropre, 
+            id_entreprise, 
+            id_user
+        ]);
+        
+        res.status(200).json({ message: 'Insertion réussie' });
         
     } catch (err) {
-        if(err.code=='ER_DUP_ENTRY'){
-          res.status(409).json({message:'Mail deja existant '})
+        // 🌟 CORRECTION 2 : On ajoute les "return" obligatoires !
+        if(err.code === 'ER_DUP_ENTRY'){
+          return res.status(409).json({ error: 'Cet email est déjà existant' });
         }
-        console.error(err);
-        res.status(500).json({message:'erreur lors de linsertion'});
         
+        console.error(err);
+        return res.status(500).json({ error: "Erreur lors de l'insertion" });
     }
 });
 router.get('/excel',async(req,res)=>{

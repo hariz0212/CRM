@@ -13,6 +13,8 @@ function AjtEntreprise({ onClose, onSuccess }: AjtEntrepriseProps) {
   const id_user = getUserid();
   const [loading, setLoading] = useState(false);
   
+  const [erreurApi, setErreurApi] = useState<string | null>(null);
+
   // 1. État de l'entreprise
   const [newEntreprise, setNewEntreprise] = useState({
     nom: '', type_entreprise: '', SIRET: '', secteur: '', siteweb: '', telephone: '', 
@@ -72,9 +74,8 @@ function AjtEntreprise({ onClose, onSuccess }: AjtEntrepriseProps) {
       onSuccess();
       alert('Insertion réussie !');
       onClose();
-    } catch (error) {
-      console.error("Erreur lors de l'ajout :", error);
-      alert('Échec de l\'insertion');
+    } catch (error:any) {
+      setErreurApi(error.message);
     } finally {
       setLoading(false);
     }
@@ -176,11 +177,11 @@ function AjtEntreprise({ onClose, onSuccess }: AjtEntrepriseProps) {
     <input required={showContactForm} name="prenom" onChange={changeContactIn} value={newContact.prenom} type="text" className="w-full border border-indigo-200 rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-indigo-400" />
   </div>
   <div>
-    <label className="block text-[10px] font-bold text-indigo-700 uppercase mb-1">Fonction</label>
+    <label className="block text-[10px] font-bold text-indigo-a700 uppercase mb-1">Fonction</label>
     <input name="fonction" onChange={changeContactIn} value={newContact.fonction} type="text" className="w-full border border-indigo-200 rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-indigo-400" />
   </div>
   <div>
-    <label className="block text-[10px] font-bold text-indigo-700 uppercase mb-1">Email</label>
+    <label className="block text-[10px] font-bold text-indigo-a700 uppercase mb-1">Email</label>
     <input name="email" onChange={changeContactIn} value={newContact.email} type="email" className="w-full border border-indigo-200 rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-indigo-400" />
   </div>
   
@@ -229,7 +230,22 @@ function AjtEntreprise({ onClose, onSuccess }: AjtEntrepriseProps) {
           </div>
         </form>
       </div>
+      {/* 🌟 LA BOÎTE D'ERREUR ROUGE 🌟 */}
+        {erreurApi && (
+          <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-xl flex items-start gap-3 animate-in fade-in slide-in-from-top-2">
+            <span className="text-red-500 text-lg mt-0.5">⚠️</span>
+            <div>
+              <h4 className="text-[10px] font-black uppercase tracking-widest text-red-800">Erreur</h4>
+              <p className="text-xs text-red-600 font-medium mt-0.5">{erreurApi}</p>
+            </div>
+            {/* Petit bouton pour fermer l'erreur manuellement */}
+            <button onClick={() => setErreurApi(null)} className="ml-auto text-red-400 hover:text-red-800">
+              ✕
+            </button>
+          </div>
+        )}
     </div>
+    
   );
 }
 

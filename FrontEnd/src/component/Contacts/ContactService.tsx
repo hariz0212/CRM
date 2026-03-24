@@ -37,9 +37,9 @@ export const updateContact = async (id_contact: string | number, data: any) => {
         // Même logique pour les contacts
         const reponse = await axios.put(`${url}contacts/${id_contact}`, data);
         return reponse;
-    } catch (err) {
+    } catch (err:any) {
         console.error("Erreur mise à jour contact:", err);
-        throw err;
+        throw Error(err.data);
     }
 };
 
@@ -55,17 +55,27 @@ export const updateComm= async(data:string,id_contact:string)=>{
 
 }
 
-export const AddContact=async(data:Omit<Contact,'id_contact'>)=>{
-    
-    try{
-        const reponse=await axios.post(`${url}contacts`,data);
-        return reponse
-    }catch(err){
-        console.error(err);
-        throw err;
-    }
-}
+export const AddContact = async (contactData: any) => {
+    try {
+        const reponse = await axios.post(`${url}contacts`, contactData);
+        return reponse.data; 
+    } catch (err: any) {
+        
+        // 🌟 L'ASTUCE EST ICI : On va chercher la clé "error" du backend
+        if (err.response && err.response.data) {
+            
+            // On récupère "Cet email est déjà existant" (ou un fallback)
+            const messageBackend = err.response.data.error || err.response.data.message || "Erreur lors de l'insertion";
+            
+            // On jette ce texte précis pour que ton composant l'attrape !
+            throw new Error(messageBackend); 
 
+        } else {
+            // Si le serveur est injoignable
+            throw new Error("Impossible de joindre le serveur.");
+        }
+    }
+};
 export const getContactById=async(id:number|string)=>{
     try{
         const reponse=await axios.get(`${url}contacts/${id}`);

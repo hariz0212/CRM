@@ -9,6 +9,7 @@ export interface ITache {
   date_heure_rappel: string; // DATETIME
   libelle_tache: string;     // VARCHAR
   statut_tache: StatutTache; // ENUM
+  info?:string;
   id_user: string | number; 
   id_entreprise?: string | number | null;
   id_contact?: string | number | null;

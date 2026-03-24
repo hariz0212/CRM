@@ -47,10 +47,10 @@ router.get('/contact/:id',async(req,res)=>{
 
 router.put('/:id', async(req,res)=>{
     const{id}=req.params;
-    const{libelle_tache}=req.body;
-    const sql = "UPDATE TACHE SET libelle_tache = ? WHERE id_tache = ?";
+    const{libelle_tache,info}=req.body;
+    const sql = "UPDATE TACHE SET libelle_tache = ? , info=?  WHERE id_tache = ?";
     try {
-        await db.query(sql,[libelle_tache,id]);
+        await db.query(sql,[libelle_tache,info,id]);
         res.status(200).json({message:'modification commentaire niveau base de donné'});
     } catch (err) {
         console.log(err)
@@ -115,37 +115,40 @@ router.post('/', async (req, res) => {
         statut_tache, 
         id_user, 
         id_entreprise, 
-        id_contact 
+        id_contact,
+        info // 🌟 Le nouveau champ est bien là
     } = req.body;
 
-    // ✅ CORRECTION 1 : L'entreprise n'est plus obligatoire !
+    // L'entreprise n'est plus obligatoire !
     if (!libelle_tache || !id_user) {
         return res.status(400).json({ message: "Champs obligatoires manquants" });
     }
 
     const sql = `
-        INSERT INTO TACHE 
-        (date_heure_rappel, libelle_tache, statut_tache, id_user, id_entreprise, id_contact) 
-        VALUES (?, ?, ?, ?, ?, ?)
+        INSERT INTO TACHE (date_heure_rappel, libelle_tache, statut_tache, id_user, id_entreprise, id_contact, info) 
+        VALUES (?, ?, ?, ?, ?, ?, ?)
     `;
 
     try {
-        // ✅ CORRECTION 2 : On force la valeur NULL pour SQL si c'est vide
+        // On force la valeur NULL pour SQL si c'est vide
         const entrepriseId = id_entreprise || null; 
         const contactId = id_contact || null;
+        const infoFinale = info || null;
         
-        const [result] = await db.query(sql, [
+        // On utilise bien nos variables propres !
+        const [reponse] = await db.query(sql, [
             date_heure_rappel, 
             libelle_tache, 
             statut_tache, 
             id_user, 
-            entrepriseId, // 👈 On utilise la variable "propre" ici
-            contactId
+            entrepriseId, 
+            contactId, 
+            infoFinale
         ]);
 
         res.status(201).json({ 
             message: "Tâche créée avec succès", 
-            id_tache: result.insertId 
+            id_tache: reponse.insertId // ✅ CORRECTION : On utilise "reponse" ici !
         });
     } catch (err) {
         console.error("Erreur insertion tâche:", err);

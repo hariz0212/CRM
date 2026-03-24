@@ -13,16 +13,17 @@ export const getAllTache = async (id_user: string | number) => {
     }
 };
 
-export const updateTacheLibelle = async (data: string, id_tache: string | number) => {
+export const updateTacheLibelle = async (libelle_tache: string, info: string, id_tache: string | number) => {
     try {
-        // On suit la même structure : URL + /taches/libelle/ + ID
+        // On envoie maintenant les DEUX informations au backend
         const reponse = await axios.put(`${url}taches/${id_tache}`, { 
-            libelle_tache: data 
+            libelle_tache: libelle_tache,
+            info: info
         });
         return reponse;
     } catch (err) {
-        console.error("Erreur lors de la mise à jour du libellé de la tâche :");
-        console.error("Data envoyée :", data);
+        console.error("Erreur lors de la mise à jour de la tâche :");
+        console.error("Données envoyées :", { libelle_tache, info });
         throw err;
     }
 };

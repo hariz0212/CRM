@@ -35,18 +35,31 @@ export const getAllEntreprise = async (id:string) =>{
     }
 }
 
-export const AddEntreprise=async(data:Omit<Entreprise,'id_entreprise'>)=>{
-    console.log("Envoi au back:", data);
-    try{
-        const reponse= await axios.post(`${url}entreprises`,data);
-        return reponse;
-    }catch(err){
-        console.error('erreur lors  de l insertion',err )
-        throw err;
+export const AddEntreprise = async (entrepriseData: any) => {
+    try {
+        const reponse = await axios.post(`${url}entreprises`, entrepriseData);
+        return reponse.data; 
+    } catch (err: any) {
+        
+        // 🌟 1. SÉCURITÉ : On vérifie que "response" et "data" existent bien
+        if (err.response && err.response.data) {
+            
+            // 🌟 2. CORRECTION : On utilise bien "response" (avec le S)
+            console.log('Erreur reçue du backend :', err.response.data);
+            
+            // 🌟 3. LE MESSAGE : On récupère ta clé "error" (ex: "Vous avez déjà enregistré...")
+            // Si le backend n'a pas mis de clé "error", on met un message par défaut.
+            const messageBackend = err.response.data.error || "Erreur lors de l'insertion";
+            
+            throw new Error(messageBackend); 
+
+        } else {
+            // Cas où le serveur Node.js est éteint ou injoignable
+            throw new Error("Impossible de joindre le serveur.");
+        }
     }
+};
 
-
-}
 export const updateEntreprise = async (id_entreprise: string | number, data: any) => {
     try {
         // On envoie l'objet data qui contient tous les champs (nom, ville, etc.)

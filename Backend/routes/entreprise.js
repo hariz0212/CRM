@@ -45,42 +45,75 @@ router.post('/', async (req, res) => {
     console.log("Données reçues depuis React :", req.body);
     
     try {
-        // 1. On extrait les variables (en gérant ton 'code_postale' avec un 'e')
+        // 1. EXTRACTION
         const { 
             nom, type_entreprise, SIRET, secteur, siteweb, 
             telephone, rue, ville, code_postale, statut_contact, 
             cfa, id_user 
         } = req.body;
-        const siretPropre = (SIRET === "") ? null : SIRET;
-        const cfaPropre = (cfa === "") ? null : cfa;
 
-        // 2. LE VIDEUR : On vérifie si l'entreprise existe D'ABORD
+        // 🛡️ NIVEAU 1 : VALIDATION DES CHAMPS OBLIGATOIRES
+        // Si l'application React oublie d'envoyer le nom ou l'ID de l'utilisateur, on bloque tout de suite !
+        if (!nom || nom.trim() === "") {
+            return res.status(400).json({ error: "Le nom de l'entreprise est obligatoire." });
+        }
+        if (!id_user) {
+            return res.status(400).json({ error: "L'identifiant de l'utilisateur est manquant." });
+        }
+
+        // Nettoyage des données optionnelles
+        const siretPropre = (SIRET === "" || !SIRET) ? null : SIRET;
+        const cfaPropre = (cfa === "" || !cfa) ? null : cfa;
+
+        // 🛡️ NIVEAU 2 : LE VIDEUR (Vérification métier)
         const [entrepriseExistante] = await db.query(
-            "SELECT * FROM ENTREPRISE WHERE nom = ? AND id_user = ?", 
+            "SELECT id_entreprise FROM ENTREPRISE WHERE nom = ? AND id_user = ?", 
             [nom, id_user]
         );
 
         if (entrepriseExistante.length > 0) { 
-            // Si le tableau n'est pas vide, on bloque et on renvoie l'erreur 400
             return res.status(400).json({ error: "Vous avez déjà enregistré cette entreprise dans votre liste." });
         }
 
-        // 3. L'INSERTION : Si on arrive ici, c'est que l'entreprise n'existe pas encore !
-        const sql = 'INSERT INTO ENTREPRISE (nom, type_entreprise, SIRET, secteur, siteweb, telephone, rue, ville, code_postal, statut_contact, cfa, id_user) VALUES(?,?,?,?,?,?,?,?,?,?,?,?)';
+        // 3. L'INSERTION
+        const sql = `
+            INSERT INTO ENTREPRISE 
+            (nom, type_entreprise, SIRET, secteur, siteweb, telephone, rue, ville, code_postal, statut_contact, cfa, id_user) 
+            VALUES(?,?,?,?,?,?,?,?,?,?,?,?)
+        `;
         
-        // On passe bien toutes les variables, y compris code_postale
-        const [result]=await db.query(sql, [nom, type_entreprise, siretPropre, secteur, siteweb, telephone, rue, ville, code_postale, statut_contact, cfaPropre, id_user]);
+        const [result] = await db.query(sql, [
+            nom, type_entreprise, siretPropre, secteur, siteweb, telephone, 
+            rue, ville, code_postale, statut_contact, cfaPropre, id_user
+        ]);
         
-        // 4. On prévient React que tout est parfait
-        res.status(200).json({ 
-            message: 'Entreprise créée', 
-            id_entreprise: result.insertId // 👈 C'est ÇA qui permet à React de faire la suite !
+        // 4. SUCCÈS
+        res.status(201).json({ // 201 est le code parfait pour "Création réussie" (au lieu de 200)
+            message: 'Entreprise créée avec succès', 
+            id_entreprise: result.insertId 
         });
 
     } catch (err) {
-        // Si la base de données a un vrai problème (serveur éteint, faute de frappe SQL...)
-        console.error("Erreur SQL critique :", err);
-        res.status(500).json({ error: "Erreur serveur lors de l'insertion." });
+        // 🛡️ NIVEAU 3 : GESTION DES ERREURS SQL ET CRASHES
+        console.error("Erreur SQL lors de l'insertion de l'entreprise :", err);
+
+        // Si le SIRET ou un autre champ est trop long par rapport à ce qui est défini dans ta BDD
+        if (err.code === 'ER_DATA_TOO_LONG') {
+            return res.status(400).json({ error: "Une des informations saisies est trop longue." });
+        }
+        
+        // Si une contrainte de clé étrangère échoue (ex: l'id_user envoyé n'existe pas en base)
+        if (err.code === 'ER_NO_REFERENCED_ROW_2') {
+            return res.status(400).json({ error: "L'utilisateur associé est introuvable." });
+        }
+
+        // Si on a loupé un doublon malgré le videur (ex: contrainte UNIQUE sur le SIRET dans la BDD)
+        if (err.code === 'ER_DUP_ENTRY') {
+            return res.status(400).json({ error: "Cette entreprise ou ce SIRET existe déjà." });
+        }
+
+        // Erreur générique par défaut (500)
+        res.status(500).json({ error: "Une erreur interne est survenue lors de la création de l'entreprise." });
     }
 });
 // Le :id dans l'URL devient disponible dans req.params.id
