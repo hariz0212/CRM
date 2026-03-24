@@ -51,7 +51,15 @@ const fetchData = async () => {
   return (
     <div className="p-6">
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold text-gray-800">Gestion des Entreprises</h1>
+        
+        {/* 🌟 NOUVEAU TITRE AVEC LE COMPTEUR 🌟 */}
+        <h1 className="text-2xl font-bold text-gray-800 flex items-center gap-3">
+          Gestion des Entreprises
+          <span className="bg-blue-100 text-blue-900 text-sm font-black px-3 py-1 rounded-full shadow-inner">
+            {filteredEntreprises.length}
+          </span>
+        </h1>
+
         <button onClick={() => setAfficheForm(true)} className="bg-blue-900 hover:bg-blue-800 text-white px-4 py-2 rounded-md font-medium transition shadow-sm">
           + Ajouter une entreprise
         </button>
