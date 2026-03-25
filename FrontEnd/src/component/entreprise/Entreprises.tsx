@@ -80,7 +80,6 @@ const fetchData = async () => {
         <table className="min-w-full divide-y divide-gray-200">
           <thead className="bg-gray-50">
             <tr>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">SIRET</th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Nom</th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Secteur</th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Statut</th>
@@ -91,7 +90,6 @@ const fetchData = async () => {
             {currentEntreprises.map((entreprise) => (
               <tr key={entreprise.id_entreprise} className="hover:bg-gray-50 transition">
                 {/* Attention : on utilise les noms de colonnes SQL (siret, nom, etc.) */}
-                <td className="px-6 py-4 text-sm text-gray-600 font-mono">{entreprise.SIRET || 'N/A'}</td>
                 <td className="px-6 py-4 text-sm font-semibold text-blue-900">{entreprise.nom}</td>
                 <td className="px-6 py-4 text-sm text-gray-600">{entreprise.secteur}</td>
                 <td className="px-6 py-4">
