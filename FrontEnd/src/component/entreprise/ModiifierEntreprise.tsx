@@ -55,13 +55,17 @@ function ModifierEntreprise({ entreprise, onClose, onRefresh }: ModifierEntrepri
 
             {/* Type & Secteur */}
             <div className="space-y-1">
-              <label className="text-[10px] font-black uppercase text-slate-400 tracking-widest">Type</label>
-              <input 
-                type="text"
-                className="w-full border-b-2 border-gray-100 focus:border-slate-500 outline-none py-2 text-sm"
+              <label className="text-[10px] font-black uppercase text-slate-400 tracking-widest">Type d'établissement</label>
+              <select
+                className="w-full border-b-2 border-gray-100 focus:border-slate-500 outline-none py-2 text-sm bg-transparent"
                 value={formData.type_entreprise || ''}
                 onChange={(e) => setFormData({...formData, type_entreprise: e.target.value})}
-              />
+              >
+                <option value="">— Non défini —</option>
+                <option value="GE">Grande Entreprise</option>
+                <option value="ASS">Association</option>
+                <option value="Coll">Collectivité</option>
+              </select>
             </div>
             <div className="space-y-1">
               <label className="text-[10px] font-black uppercase text-slate-400 tracking-widest">Secteur</label>
