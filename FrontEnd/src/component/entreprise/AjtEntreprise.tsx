@@ -109,6 +109,8 @@ function AjtEntreprise({ onClose, onSuccess }: AjtEntrepriseProps) {
                   <option value='GE'>Grande Entreprise</option>
                   <option value='ASS'>Association</option>
                   <option value='Coll'>Collectivité</option>
+                  <option value='SU'>Start-up</option>
+                  <option value='IP'>Institution Publique</option>
                 </select>
               </div>
               <div>
