@@ -12,6 +12,9 @@ const TYPE_OPTIONS = [
   { value: 'Coll', label: 'Collectivité', color: 'bg-purple-100 text-purple-800 border-purple-300' },
   { value: 'SU', label: 'Start-up', color: 'bg-orange-100 text-orange-800 border-orange-300' },
   { value: 'IP', label: 'Institution Publique', color: 'bg-teal-100 text-teal-800 border-teal-300' },
+  { value: 'CAB', label: 'Cabinet', color: 'bg-yellow-100 text-yellow-800 border-yellow-300' },
+  { value: 'AGC', label: 'Agence', color: 'bg-pink-100 text-pink-800 border-pink-300' },
+  { value: 'LAB', label: 'Laboratoire', color: 'bg-indigo-100 text-indigo-800 border-indigo-300' },
   { value: '__none__', label: 'Non défini', color: 'bg-gray-50 text-gray-400 border-gray-200' },
 ];
 
