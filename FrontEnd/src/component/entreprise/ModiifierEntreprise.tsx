@@ -67,6 +67,9 @@ function ModifierEntreprise({ entreprise, onClose, onRefresh }: ModifierEntrepri
                 <option value="Coll">Collectivité</option>
                 <option value="SU">Start-up</option>
                 <option value="IP">Institution Publique</option>
+                <option value="CAB">Cabinet</option>
+                <option value="AGC">Agence</option>
+                <option value="LAB">Laboratoire</option>
               </select>
             </div>
             <div className="space-y-1">
